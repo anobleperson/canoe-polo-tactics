@@ -85,10 +85,10 @@ body {
 .line.halfway { stroke-opacity: 0.9; }
 .boundary { stroke-width: 0.15; }
 .spot { fill: #ffffff; }
-.goal-net { fill: rgba(255, 255, 255, 0.35); stroke: #ffffff; stroke-width: 0.04; }
+.goal-net { fill: rgba(229, 57, 53, 0.35); stroke: #e53935; stroke-width: 0.05; }
 .offview { fill: var(--bg); display: none; }
 [data-court="half"] .offview { display: inline; }
-.goal-bar { stroke: #ffffff; stroke-width: 0.2; stroke-linecap: round; }
+.goal-bar { stroke: #e53935; stroke-width: 0.28; stroke-linecap: round; }
 
 /* Pieces */
 .team-a { --team: #e63946; --team-dark: #8f1d26; }
