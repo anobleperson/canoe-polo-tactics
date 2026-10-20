@@ -44,3 +44,16 @@ export function cloneState(state) {
 export function sameState(a, b) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
+
+// Make loaded data safe to use: fill anything missing from the starting state.
+export function normaliseState(data) {
+  const court = data?.court === 'half' ? 'half' : 'full';
+  const base = startingState(court);
+  const num = (v, d) => (Number.isFinite(v) ? v : d);
+  const pieces = base.pieces.map((p) => {
+    const saved = data?.pieces?.find((s) => s.id === p.id) || {};
+    return { ...p, x: num(saved.x, p.x), y: num(saved.y, p.y), angle: num(saved.angle, p.angle) };
+  });
+  const ball = { x: num(data?.ball?.x, base.ball.x), y: num(data?.ball?.y, base.ball.y) };
+  return { court, pieces, ball };
+}

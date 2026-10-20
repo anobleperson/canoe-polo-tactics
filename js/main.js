@@ -1,9 +1,10 @@
 import { drawPitch, applyView, viewRect, viewRotation } from './pitch.js';
 import { el } from './svg.js';
-import { startingState, sameState } from './state.js';
+import { startingState, sameState, cloneState, normaliseState } from './state.js';
 import { PieceLayer } from './pieces.js';
 import { attachInput } from './input.js';
 import { LineLayer } from './lines.js';
+import { openLibrary } from './library.js';
 import { button, segmented, confirmDialog } from './ui.js';
 
 const svg = document.getElementById('board');
@@ -73,6 +74,27 @@ function setCourt(court) {
   render();
 }
 
+// Replace the board with a loaded state.
+function loadState(data) {
+  state = normaliseState(data);
+  pieces.selectedId = null;
+  lines.clear();
+  courtToggle.set(state.court);
+  render();
+}
+
+function openSaved() {
+  openLibrary([
+    {
+      kind: 'setups',
+      title: 'Setups',
+      getData: () => cloneState(state),
+      onLoad: loadState,
+      confirmLoad: boardChanged,
+    },
+  ]);
+}
+
 attachInput(svg, world, {
   state: () => state,
   viewAngle: () => viewRotation(state.court),
@@ -96,6 +118,7 @@ tools.append(
   button('Clear lines', () => lines.clear()),
   courtToggle.el,
   button('Reset', reset),
+  button('Saved', openSaved),
 );
 
 setMode('move');
