@@ -10,6 +10,7 @@ export const normAngle = (a) => ((a % 360) + 360) % 360;
 //
 // app provides:
 //   state()            current board state
+//   viewAngle()        screen rotation of the view in degrees
 //   selectedId()       id of the selected boat or null
 //   select(id)         select a boat (or null)
 //   clamp(x, y)        keep a point inside the visible area
@@ -18,7 +19,7 @@ export const normAngle = (a) => ((a % 360) + 360) % 360;
 //   mode()             'move' | 'draw'
 //   lines              LineLayer (for draw mode), optional
 //   onGestureEnd()     a drag/rotate finished (optional)
-export function attachInput(svg, app) {
+export function attachInput(svg, world, app) {
   // One entry per active pointer, so several fingers can act at once.
   const gestures = new Map();
 
@@ -27,7 +28,7 @@ export function attachInput(svg, app) {
 
   svg.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button > 0) return;
-    const p = toSvgPoint(svg, e);
+    const p = toSvgPoint(world, e);
     const state = app.state();
 
     if (app.mode() === 'draw' && app.lines) {
@@ -61,7 +62,7 @@ export function attachInput(svg, app) {
   svg.addEventListener('pointermove', (e) => {
     const g = gestures.get(e.pointerId);
     if (!g) return;
-    const p = toSvgPoint(svg, e);
+    const p = toSvgPoint(world, e);
 
     if (g.kind === 'line') {
       app.lines.extend(e.pointerId, p);
@@ -122,14 +123,21 @@ export function attachInput(svg, app) {
     const piece = findPiece(app.state(), id);
     const step = e.shiftKey ? 5 : ROTATE_STEP;
     const move = e.shiftKey ? 1 : NUDGE;
+    // Arrow keys move in screen directions, so undo the view rotation.
+    const nudge = (sx, sy) => {
+      const a = (-app.viewAngle() * Math.PI) / 180;
+      const dx = sx * Math.cos(a) - sy * Math.sin(a);
+      const dy = sx * Math.sin(a) + sy * Math.cos(a);
+      Object.assign(piece, app.clamp(piece.x + dx * move, piece.y + dy * move));
+    };
     let handled = true;
     switch (e.key) {
       case 'q': case 'Q': case '[': piece.angle = normAngle(piece.angle - step); break;
       case 'e': case 'E': case ']': piece.angle = normAngle(piece.angle + step); break;
-      case 'ArrowLeft': Object.assign(piece, app.clamp(piece.x - move, piece.y)); break;
-      case 'ArrowRight': Object.assign(piece, app.clamp(piece.x + move, piece.y)); break;
-      case 'ArrowUp': Object.assign(piece, app.clamp(piece.x, piece.y - move)); break;
-      case 'ArrowDown': Object.assign(piece, app.clamp(piece.x, piece.y + move)); break;
+      case 'ArrowLeft': nudge(-1, 0); break;
+      case 'ArrowRight': nudge(1, 0); break;
+      case 'ArrowUp': nudge(0, -1); break;
+      case 'ArrowDown': nudge(0, 1); break;
       default: handled = false;
     }
     if (handled) {

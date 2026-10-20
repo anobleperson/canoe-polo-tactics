@@ -86,6 +86,8 @@ body {
 .boundary { stroke-width: 0.15; }
 .spot { fill: #ffffff; }
 .goal-net { fill: rgba(255, 255, 255, 0.35); stroke: #ffffff; stroke-width: 0.04; }
+.offview { fill: var(--bg); display: none; }
+[data-court="half"] .offview { display: inline; }
 .goal-bar { stroke: #ffffff; stroke-width: 0.2; stroke-linecap: round; }
 
 /* Pieces */

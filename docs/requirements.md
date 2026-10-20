@@ -16,7 +16,7 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - Draw a canoe polo pitch with the standard markings (boundaries, halfway line, goal areas/6 m lines, goals).
 - Two display modes:
   - **Full court**: the whole pitch.
-  - **Half court**: one fixed attacking half with a single goal, zoomed in.
+  - **Half court**: one fixed attacking half with a single goal, zoomed in. It is turned so the goal is at the top, which fills a landscape screen.
 - Boats, players and ball scale to match the selected mode (bigger in half court).
 
 ### Pieces

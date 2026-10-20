@@ -1,8 +1,9 @@
-import { drawPitch, applyView, viewRect } from './pitch.js';
+import { drawPitch, applyView, viewRect, viewRotation } from './pitch.js';
+import { el } from './svg.js';
 import { startingState, sameState } from './state.js';
 import { PieceLayer } from './pieces.js';
 import { attachInput } from './input.js';
-import { button, confirmDialog } from './ui.js';
+import { button, segmented, confirmDialog } from './ui.js';
 
 const svg = document.getElementById('board');
 const tools = document.getElementById('tools');
@@ -10,12 +11,15 @@ const tools = document.getElementById('tools');
 let state = startingState('full');
 let mode = 'move';
 
-svg.appendChild(drawPitch());
-const pieces = new PieceLayer(svg);
+// Everything on the board lives in one group, in pitch metres.
+const world = el('g', { id: 'world' });
+svg.appendChild(world);
+world.appendChild(drawPitch());
+const pieces = new PieceLayer(world);
 
 function render() {
-  applyView(svg, state.court);
-  pieces.render(state);
+  applyView(svg, world, state.court);
+  pieces.render(state, viewRotation(state.court));
 }
 
 // Keep piece centres inside the visible area.
@@ -42,8 +46,24 @@ async function reset() {
   render();
 }
 
-attachInput(svg, {
+// Switch between full and half court. An untouched board switches to that
+// court's starting layout; otherwise pieces are kept and any outside the new
+// view are pulled to its edge.
+function setCourt(court) {
+  if (court === state.court) return;
+  if (!boardChanged()) {
+    state = startingState(court);
+  } else {
+    state.court = court;
+    for (const p of [...state.pieces, state.ball]) Object.assign(p, clamp(p.x, p.y));
+  }
+  courtToggle.set(court);
+  render();
+}
+
+attachInput(svg, world, {
   state: () => state,
+  viewAngle: () => viewRotation(state.court),
   selectedId: () => pieces.selectedId,
   select(id) {
     pieces.selectedId = id;
@@ -55,6 +75,8 @@ attachInput(svg, {
   mode: () => mode,
 });
 
-tools.append(button('Reset', reset));
+const courtToggle = segmented([['full', 'Full'], ['half', 'Half']], state.court, setCourt);
+
+tools.append(courtToggle.el, button('Reset', reset));
 
 render();

@@ -66,14 +66,15 @@ function ballElement() {
 
 // Keeps one SVG element per piece and updates transforms on render.
 export class PieceLayer {
-  constructor(svg) {
+  constructor(parent) {
     this.group = el('g', { id: 'pieces' });
-    svg.appendChild(this.group);
+    parent.appendChild(this.group);
     this.nodes = new Map();
     this.selectedId = null;
   }
 
-  render(state) {
+  // viewAngle: rotation of the whole view, so numbers can stay upright.
+  render(state, viewAngle = 0) {
     const seen = new Set();
     for (const piece of state.pieces) {
       let node = this.nodes.get(piece.id);
@@ -84,6 +85,7 @@ export class PieceLayer {
       }
       node.setAttribute('transform', `translate(${piece.x} ${piece.y})`);
       node.querySelector('.hull').setAttribute('transform', `rotate(${piece.angle})`);
+      node.querySelector('.number').setAttribute('transform', `rotate(${-viewAngle})`);
       node.classList.toggle('selected', piece.id === this.selectedId);
       seen.add(piece.id);
     }

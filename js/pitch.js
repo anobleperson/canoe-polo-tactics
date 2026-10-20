@@ -16,9 +16,24 @@ export function viewRect(court) {
   return { x: -MARGIN, y: -MARGIN, w: L + 2 * MARGIN, h: W + 2 * MARGIN };
 }
 
-export function applyView(svg, court) {
+// Screen rotation of the pitch: half court is turned so its goal is at the
+// top, which fills a landscape screen better.
+export function viewRotation(court) {
+  return court === 'half' ? -90 : 0;
+}
+
+// world: the <g> holding pitch, lines and pieces (all in pitch metres).
+export function applyView(svg, world, court) {
   const r = viewRect(court);
-  svg.setAttribute('viewBox', `${r.x} ${r.y} ${r.w} ${r.h}`);
+  svg.dataset.court = court;
+  if (viewRotation(court) === -90) {
+    // rotate(-90) maps (x, y) to (y, -x).
+    world.setAttribute('transform', 'rotate(-90)');
+    svg.setAttribute('viewBox', `${r.y} ${-(r.x + r.w)} ${r.h} ${r.w}`);
+  } else {
+    world.removeAttribute('transform');
+    svg.setAttribute('viewBox', `${r.x} ${r.y} ${r.w} ${r.h}`);
+  }
 }
 
 function goal(x, facing) {
@@ -43,5 +58,7 @@ export function drawPitch() {
     el('rect', { x: 0, y: 0, width: L, height: W, class: 'line boundary' }),
     goal(0, 1),
     goal(L, -1),
+    // Covers the unused half in half-court mode.
+    el('rect', { x: -50, y: -50, width: 50 + L / 2 - MARGIN, height: W + 100, class: 'offview' }),
   ]);
 }
