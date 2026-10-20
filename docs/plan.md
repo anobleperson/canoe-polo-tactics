@@ -40,7 +40,7 @@ js/animation.js   frames, playback, interpolation
 - [x] **3. Pieces and starting state**: boat silhouette with a number, two team colours, ball. Render the starting layout from state.
 - [x] **4. Drag to move**: move boats and the ball with mouse or one finger. Keep them within the pitch area.
 - [x] **5. Rotate boats**: a rotate handle on the selected boat (works with mouse), plus mouse wheel or keyboard shortcut.
-- [ ] **6. Reset**: Reset button with confirmation if the board has changed. Clears lines.
+- [x] **6. Reset**: Reset button with confirmation if the board has changed. Clears lines.
 - [ ] **7. Half court**: toggle between full and half court. Pieces scale with the view. Reset layout for half court.
 - [ ] **8. Freehand lines**: draw mode toggle, freehand drawing, "Clear all lines". Lines are not part of saved state.
 - [ ] **9. Save/load setups**: named saves in localStorage, a list to load or delete.

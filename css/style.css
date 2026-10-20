@@ -117,3 +117,45 @@ body {
 .handle-icon { fill: none; stroke: #f0c419; stroke-width: 0.07; stroke-linecap: round; stroke-linejoin: round; }
 .ball-body { fill: #ffd23f; stroke: #8a6a00; stroke-width: 0.04; }
 .ball-seam { fill: none; stroke: #1f3b8a; stroke-width: 0.07; }
+
+/* Buttons */
+.btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--btn);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.btn:hover { background: var(--btn-hover); }
+.btn:active { transform: translateY(1px); }
+.btn.active, .btn.primary { background: var(--btn-active); color: var(--btn-active-text); }
+.btn.danger { background: var(--danger); color: #fff; }
+.btn:disabled { opacity: 0.4; cursor: default; }
+
+.segmented { display: inline-flex; }
+.segmented .btn { border-radius: 0; }
+.segmented .btn:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+.segmented .btn:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+.segmented .btn + .btn { border-left: 1px solid var(--toolbar); }
+
+/* Dialogs */
+.modal {
+  border: none;
+  border-radius: 14px;
+  padding: 20px;
+  background: var(--toolbar);
+  color: var(--text);
+  min-width: min(360px, 90vw);
+  max-width: 90vw;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+.modal::backdrop { background: rgba(0, 0, 0, 0.55); }
+.modal p { font-size: 18px; margin: 0 0 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }

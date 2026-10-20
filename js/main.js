@@ -1,9 +1,11 @@
 import { drawPitch, applyView, viewRect } from './pitch.js';
-import { startingState } from './state.js';
+import { startingState, sameState } from './state.js';
 import { PieceLayer } from './pieces.js';
 import { attachInput } from './input.js';
+import { button, confirmDialog } from './ui.js';
 
 const svg = document.getElementById('board');
+const tools = document.getElementById('tools');
 
 let state = startingState('full');
 let mode = 'move';
@@ -26,6 +28,20 @@ function clamp(x, y) {
   };
 }
 
+function boardChanged() {
+  return !sameState(state, startingState(state.court));
+}
+
+async function reset() {
+  if (boardChanged()) {
+    const ok = await confirmDialog('Reset the board to the starting positions?', { ok: 'Reset', danger: true });
+    if (!ok) return;
+  }
+  state = startingState(state.court);
+  pieces.selectedId = null;
+  render();
+}
+
 attachInput(svg, {
   state: () => state,
   selectedId: () => pieces.selectedId,
@@ -38,5 +54,7 @@ attachInput(svg, {
   changed: render,
   mode: () => mode,
 });
+
+tools.append(button('Reset', reset));
 
 render();
