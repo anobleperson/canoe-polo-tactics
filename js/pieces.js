@@ -31,16 +31,21 @@ function paddle() {
 
 function boatElement(piece) {
   const hull = el('g', { class: 'hull' }, [
+    el('ellipse', { cx: 0, cy: 0, rx: HL + 0.25, ry: 1.0, class: 'hit' }),
     el('path', { d: HULL_PATH, class: 'select-ring' }),
     el('path', { d: HULL_PATH, class: 'hull-shape' }),
     el('ellipse', { cx: -0.05, cy: 0, rx: 0.5, ry: 0.27, class: 'cockpit' }),
     el('path', { d: `M ${HL - 0.35} 0 L ${HL - 0.05} 0`, class: 'bow-tip' }),
     paddle(),
     el('line', { x1: HL, y1: 0, x2: HANDLE_OFFSET, y2: 0, class: 'handle-arm' }),
-    el('circle', { cx: HANDLE_OFFSET, cy: 0, r: 0.38, class: 'handle', 'data-handle': piece.id }),
+    el('g', { class: 'handle', 'data-handle': piece.id, transform: `translate(${HANDLE_OFFSET} 0)` }, [
+      el('circle', { cx: 0, cy: 0, r: 0.42, class: 'handle-bg' }),
+      // Circular arrow icon.
+      el('path', { d: 'M 0.2 -0.12 A 0.22 0.22 0 1 0 0.2 0.12', class: 'handle-icon' }),
+      el('path', { d: 'M 0.2 -0.26 L 0.22 -0.08 L 0.06 -0.1', class: 'handle-icon' }),
+    ]),
   ]);
   const node = el('g', { class: `piece boat team-${piece.team}`, 'data-id': piece.id }, [
-    el('ellipse', { cx: 0, cy: 0, rx: HL + 0.25, ry: 0.85, class: 'hit' }),
     hull,
     el('circle', { cx: 0, cy: 0, r: 0.42, class: 'helmet' }),
     el('text', { x: 0, y: 0.02, class: 'number' }),

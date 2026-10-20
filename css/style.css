@@ -112,6 +112,8 @@ body {
 .handle, .handle-arm { display: none; }
 .selected .select-ring { stroke: #f0c419; }
 .selected .handle-arm { display: inline; stroke: #f0c419; stroke-width: 0.08; stroke-dasharray: 0.15 0.1; }
-.selected .handle { display: inline; fill: #f0c419; stroke: #10232e; stroke-width: 0.06; cursor: alias; }
+.selected .handle { display: inline; cursor: alias; }
+.handle-bg { fill: #10232e; stroke: #f0c419; stroke-width: 0.07; }
+.handle-icon { fill: none; stroke: #f0c419; stroke-width: 0.07; stroke-linecap: round; stroke-linejoin: round; }
 .ball-body { fill: #ffd23f; stroke: #8a6a00; stroke-width: 0.04; }
 .ball-seam { fill: none; stroke: #1f3b8a; stroke-width: 0.07; }
