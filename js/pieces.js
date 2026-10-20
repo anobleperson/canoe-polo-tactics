@@ -39,6 +39,7 @@ function boatElement(piece) {
     paddle(),
     el('line', { x1: HL, y1: 0, x2: HANDLE_OFFSET, y2: 0, class: 'handle-arm' }),
     el('g', { class: 'handle', 'data-handle': piece.id, transform: `translate(${HANDLE_OFFSET} 0)` }, [
+      el('circle', { cx: 0, cy: 0, r: 0.9, class: 'hit' }),
       el('circle', { cx: 0, cy: 0, r: 0.42, class: 'handle-bg' }),
       // Circular arrow icon.
       el('path', { d: 'M 0.2 -0.12 A 0.22 0.22 0 1 0 0.2 0.12', class: 'handle-icon' }),

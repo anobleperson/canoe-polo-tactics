@@ -16,17 +16,19 @@ export function viewRect(court) {
   return { x: -MARGIN, y: -MARGIN, w: L + 2 * MARGIN, h: W + 2 * MARGIN };
 }
 
-// Screen rotation of the pitch: half court is turned so its goal is at the
-// top, which fills a landscape screen better.
-export function viewRotation(court) {
-  return court === 'half' ? -90 : 0;
+// Screen rotation of the pitch, chosen so the view's long side matches the
+// screen's: e.g. half court on a landscape screen is turned with its goal at
+// the top, and full court on a portrait phone is turned likewise.
+export function viewRotation(court, landscape) {
+  const r = viewRect(court);
+  return (r.w > r.h) === landscape ? 0 : -90;
 }
 
 // world: the <g> holding pitch, lines and pieces (all in pitch metres).
-export function applyView(svg, world, court) {
+export function applyView(svg, world, court, rotation) {
   const r = viewRect(court);
   svg.dataset.court = court;
-  if (viewRotation(court) === -90) {
+  if (rotation === -90) {
     // rotate(-90) maps (x, y) to (y, -x).
     world.setAttribute('transform', 'rotate(-90)');
     svg.setAttribute('viewBox', `${r.y} ${-(r.x + r.w)} ${r.h} ${r.w}`);

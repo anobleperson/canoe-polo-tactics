@@ -20,10 +20,16 @@ world.appendChild(drawPitch());
 const lines = new LineLayer(world);
 const pieces = new PieceLayer(world);
 
+const isLandscape = () => svg.clientWidth >= svg.clientHeight;
+const rotation = () => viewRotation(state.court, isLandscape());
+
 function render() {
-  applyView(svg, world, state.court);
-  pieces.render(state, viewRotation(state.court));
+  const angle = rotation();
+  applyView(svg, world, state.court, angle);
+  pieces.render(state, angle);
 }
+
+new ResizeObserver(render).observe(svg);
 
 // Keep piece centres inside the visible area.
 function clamp(x, y) {
@@ -97,7 +103,7 @@ function openSaved() {
 
 attachInput(svg, world, {
   state: () => state,
-  viewAngle: () => viewRotation(state.court),
+  viewAngle: rotation,
   selectedId: () => pieces.selectedId,
   select(id) {
     pieces.selectedId = id;
@@ -120,5 +126,18 @@ tools.append(
   button('Reset', reset),
   button('Saved', openSaved),
 );
+
+// Stop Safari page zoom and long-press menus on the board.
+for (const type of ['gesturestart', 'gesturechange', 'contextmenu']) {
+  svg.addEventListener(type, (e) => e.preventDefault());
+}
+document.addEventListener('dblclick', (e) => e.preventDefault());
+
+// Keyboard shortcuts: D toggles draw mode, C clears lines.
+window.addEventListener('keydown', (e) => {
+  if (e.target.closest('input, textarea, dialog') || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'd' || e.key === 'D') setMode(mode === 'draw' ? 'move' : 'draw');
+  else if (e.key === 'c' || e.key === 'C') lines.clear();
+});
 
 setMode('move');

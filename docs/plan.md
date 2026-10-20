@@ -16,7 +16,7 @@ Requirements: [requirements.md](requirements.md)
 - **Input**: Pointer Events (one code path for mouse, pen and touch; each finger has a `pointerId`, which supports multi-touch).
 - **Coordinates**: everything is stored in pitch metres (35 × 23 m). The view maps metres to screen space, so full/half court is just a different view box with the same data.
 - **State**: one plain JS object (`{ court, pieces: [{id, team, number, x, y, angle}], ball: {x, y} }`). It serialises straight to JSON for saving, export and animation frames.
-- **Local testing**: `python3 -m http.server` from the repo root (ES modules don't load over `file://`).
+- **Local testing**: `python3 tools/serve.py` from the repo root (a no-cache static server; ES modules do not load over `file://`).
 
 ### Planned file layout
 
@@ -45,7 +45,9 @@ js/animation.js   frames, playback, interpolation
 - [x] **8. Freehand lines**: draw mode toggle, freehand drawing, "Clear all lines". Lines are not part of saved state.
 - [x] **9. Save/load setups**: named saves in localStorage, a list to load or delete.
 - [x] **10. Export/import**: download and upload JSON files containing setups and animations.
-- [ ] **11. Touch-first polish**: large toolbar buttons, landscape iPad layout, no accidental page scroll/zoom, test on TV mirroring.
+- [x] **11. Touch-first polish**: large toolbar buttons, landscape iPad layout, no accidental page scroll/zoom, test on TV mirroring.
+  - Done: 44px buttons, larger rotate-handle hit area, Safari zoom/long-press blocked, view auto-rotates to match screen shape (portrait phones get a rotated full court), D/C keyboard shortcuts, favicon.
+  - Still to do: testing on a real iPad mirrored to a TV needs the deployed site (step 21).
 
 ## Phase 2 — Multi-touch (nice to have)
 
