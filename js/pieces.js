@@ -7,19 +7,19 @@ const HW = BOAT.width / 2;
 // Distance from boat centre to the rotate handle, along the bow.
 export const HANDLE_OFFSET = HL + 0.9;
 
-// Top-down kayak, bow pointing +x. The bow tapers to a point and the stern
-// is blunt, so the direction of travel is readable.
+// Top-down kayak, bow pointing +x. Both ends are rounded like a real polo
+// boat; the bow arrow shows the direction of travel.
 const HULL_PATH = [
   `M ${HL} 0`,
-  `C ${HL * 0.8} ${-HW * 0.25}, ${HL * 0.5} ${-HW}, 0 ${-HW}`,
+  `C ${HL} ${-HW * 0.85}, ${HL * 0.7} ${-HW}, 0 ${-HW}`,
   `C ${-HL * 0.7} ${-HW}, ${-HL} ${-HW * 0.85}, ${-HL} 0`,
   `C ${-HL} ${HW * 0.85}, ${-HL * 0.7} ${HW}, 0 ${HW}`,
-  `C ${HL * 0.5} ${HW}, ${HL * 0.8} ${HW * 0.25}, ${HL} 0`,
+  `C ${HL * 0.7} ${HW}, ${HL} ${HW * 0.85}, ${HL} 0`,
   'Z',
 ].join(' ');
 
 // Arrowhead on the foredeck pointing towards the bow.
-const BOW_ARROW = `M ${HL - 0.12} 0 L ${HL - 0.75} ${-HW * 0.62} L ${HL - 0.62} 0 L ${HL - 0.75} ${HW * 0.62} Z`;
+const BOW_ARROW = `M ${HL - 0.15} 0 L ${HL - 0.75} ${-HW * 0.6} L ${HL - 0.62} 0 L ${HL - 0.75} ${HW * 0.6} Z`;
 
 function paddle() {
   const reach = 1.05;
