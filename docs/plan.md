@@ -42,7 +42,7 @@ js/animation.js   frames, playback, interpolation
 - [x] **5. Rotate boats**: a rotate handle on the selected boat (works with mouse), plus mouse wheel or keyboard shortcut.
 - [x] **6. Reset**: Reset button with confirmation if the board has changed. Clears lines.
 - [x] **7. Half court**: toggle between full and half court. Pieces scale with the view. Reset layout for half court.
-- [ ] **8. Freehand lines**: draw mode toggle, freehand drawing, "Clear all lines". Lines are not part of saved state.
+- [x] **8. Freehand lines**: draw mode toggle, freehand drawing, "Clear all lines". Lines are not part of saved state.
 - [ ] **9. Save/load setups**: named saves in localStorage, a list to load or delete.
 - [ ] **10. Export/import**: download and upload JSON files containing setups and animations.
 - [ ] **11. Touch-first polish**: large toolbar buttons, landscape iPad layout, no accidental page scroll/zoom, test on TV mirroring.

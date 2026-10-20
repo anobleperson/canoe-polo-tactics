@@ -23,6 +23,14 @@ export function attachInput(svg, world, app) {
   // One entry per active pointer, so several fingers can act at once.
   const gestures = new Map();
 
+  const capture = (id) => {
+    try {
+      svg.setPointerCapture(id);
+    } catch {
+      // Pointer already gone; nothing to capture.
+    }
+  };
+
   const findPiece = (state, id) =>
     id === 'ball' ? state.ball : state.pieces.find((p) => p.id === id);
 
@@ -32,7 +40,7 @@ export function attachInput(svg, world, app) {
     const state = app.state();
 
     if (app.mode() === 'draw' && app.lines) {
-      svg.setPointerCapture(e.pointerId);
+      capture(e.pointerId);
       app.lines.start(e.pointerId, p);
       gestures.set(e.pointerId, { kind: 'line' });
       e.preventDefault();
@@ -55,7 +63,7 @@ export function attachInput(svg, world, app) {
       app.select(null);
       return;
     }
-    svg.setPointerCapture(e.pointerId);
+    capture(e.pointerId);
     e.preventDefault();
   });
 

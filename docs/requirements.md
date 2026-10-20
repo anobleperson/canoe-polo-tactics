@@ -38,7 +38,8 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 
 ### Lines / Annotations
 - Draw **temporary freehand lines** to show the direction of travel for players or the ball. Keep it simple: no straight-line, arrow-style or colour options.
-- A **Clear all lines** button removes every line.
+- Each line automatically ends in an arrowhead to show direction.
+- A **Clear all lines** button removes every line. Lines are also cleared on reset and when switching court.
 - Lines are for live explaining only. They are **never saved** in setups or animations.
 
 ### Save / Load

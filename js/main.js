@@ -3,6 +3,7 @@ import { el } from './svg.js';
 import { startingState, sameState } from './state.js';
 import { PieceLayer } from './pieces.js';
 import { attachInput } from './input.js';
+import { LineLayer } from './lines.js';
 import { button, segmented, confirmDialog } from './ui.js';
 
 const svg = document.getElementById('board');
@@ -13,8 +14,9 @@ let mode = 'move';
 
 // Everything on the board lives in one group, in pitch metres.
 const world = el('g', { id: 'world' });
-svg.appendChild(world);
+svg.append(el('defs', {}, [LineLayer.defs()]), world);
 world.appendChild(drawPitch());
+const lines = new LineLayer(world);
 const pieces = new PieceLayer(world);
 
 function render() {
@@ -33,7 +35,7 @@ function clamp(x, y) {
 }
 
 function boardChanged() {
-  return !sameState(state, startingState(state.court));
+  return !sameState(state, startingState(state.court)) || lines.count > 0;
 }
 
 async function reset() {
@@ -43,6 +45,15 @@ async function reset() {
   }
   state = startingState(state.court);
   pieces.selectedId = null;
+  lines.clear();
+  render();
+}
+
+function setMode(m) {
+  mode = m;
+  svg.dataset.mode = m;
+  modeToggle.set(m);
+  if (m === 'draw') pieces.selectedId = null;
   render();
 }
 
@@ -51,12 +62,13 @@ async function reset() {
 // view are pulled to its edge.
 function setCourt(court) {
   if (court === state.court) return;
-  if (!boardChanged()) {
-    state = startingState(court);
-  } else {
+  if (!sameState(state, startingState(state.court))) {
     state.court = court;
     for (const p of [...state.pieces, state.ball]) Object.assign(p, clamp(p.x, p.y));
+  } else {
+    state = startingState(court);
   }
+  lines.clear();
   courtToggle.set(court);
   render();
 }
@@ -73,10 +85,17 @@ attachInput(svg, world, {
   raise: (id) => pieces.raise(id),
   changed: render,
   mode: () => mode,
+  lines,
 });
 
+const modeToggle = segmented([['move', 'Move'], ['draw', 'Draw']], mode, setMode);
 const courtToggle = segmented([['full', 'Full'], ['half', 'Half']], state.court, setCourt);
 
-tools.append(courtToggle.el, button('Reset', reset));
+tools.append(
+  modeToggle.el,
+  button('Clear lines', () => lines.clear()),
+  courtToggle.el,
+  button('Reset', reset),
+);
 
-render();
+setMode('move');

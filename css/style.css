@@ -161,3 +161,16 @@ body {
 .modal::backdrop { background: rgba(0, 0, 0, 0.55); }
 .modal p { font-size: 18px; margin: 0 0 20px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+/* Lines */
+.stroke {
+  fill: none;
+  stroke: #ffd23f;
+  stroke-width: 0.18;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.arrow-head { fill: #ffd23f; }
+[data-mode="draw"] { cursor: crosshair; }
+[data-mode="draw"] .piece { cursor: crosshair; }
