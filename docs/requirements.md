@@ -27,6 +27,15 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
   - **Moved** by dragging.
   - **Rotated** (boats only) to show which way they face.
 
+### Reset Board
+- A **Reset** button puts the board back to the starting state, like a match start-up:
+  - Each team's 5 boats lined up along its own end of the pitch (one team on the left, one on the right), facing towards the centre.
+  - The ball in the middle of the pitch.
+- In half-court mode, reset uses the same layout scaled to fit: one team along the goal line, the other along the halfway line, and the ball midway between them.
+- Reset clears all drawn lines.
+- Ask for confirmation before resetting if the board has been changed, so a stray tap doesn't wipe a setup.
+- The app opens in this starting state.
+
 ### Lines / Annotations
 - Draw **temporary freehand lines** to show the direction of travel for players or the ball. Keep it simple: no straight-line, arrow-style or colour options.
 - A **Clear all lines** button removes every line.
@@ -77,4 +86,5 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 | Lines persistence | Never saved (setups or animations) |
 | Half court | One fixed attacking half |
 | Frame editing | Basic first; full editing is nice to have. One global frame duration |
+| Reset | Boats lined up at each end facing in, ball centre; confirm before reset |
 | Main device | Tablet to TV, touch-first; mouse/keyboard also supported |
