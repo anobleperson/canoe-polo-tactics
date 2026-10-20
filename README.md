@@ -4,6 +4,8 @@ A tactics board for canoe polo coaching that runs in the browser. Move two teams
 
 It is a static site (HTML, CSS and JavaScript with no build step), so it can be hosted free on GitHub Pages.
 
+**Live site:** https://anobleperson.github.io/canoe-polo-tactics/
+
 ## Using it
 
 **Board**
