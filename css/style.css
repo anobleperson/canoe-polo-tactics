@@ -87,3 +87,31 @@ body {
 .spot { fill: #ffffff; }
 .goal-net { fill: rgba(255, 255, 255, 0.35); stroke: #ffffff; stroke-width: 0.04; }
 .goal-bar { stroke: #ffffff; stroke-width: 0.2; stroke-linecap: round; }
+
+/* Pieces */
+.team-a { --team: #e63946; --team-dark: #8f1d26; }
+.team-b { --team: #f4f4f4; --team-dark: #6b7a86; }
+.hit { fill: transparent; }
+.piece { cursor: grab; }
+.hull-shape { fill: var(--team); stroke: var(--team-dark); stroke-width: 0.07; }
+.cockpit { fill: #10232e; }
+.bow-tip { stroke: var(--team-dark); stroke-width: 0.12; stroke-linecap: round; }
+.paddle-shaft { stroke: #1d1d1d; stroke-width: 0.07; }
+.paddle-blade { fill: #1d1d1d; }
+.helmet { fill: var(--team); stroke: #10232e; stroke-width: 0.06; }
+.number {
+  font-size: 0.52px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: #10232e;
+  pointer-events: none;
+}
+.team-a .number { fill: #ffffff; }
+.select-ring { fill: none; stroke: none; stroke-width: 0.3; }
+.handle, .handle-arm { display: none; }
+.selected .select-ring { stroke: #f0c419; }
+.selected .handle-arm { display: inline; stroke: #f0c419; stroke-width: 0.08; stroke-dasharray: 0.15 0.1; }
+.selected .handle { display: inline; fill: #f0c419; stroke: #10232e; stroke-width: 0.06; cursor: alias; }
+.ball-body { fill: #ffd23f; stroke: #8a6a00; stroke-width: 0.04; }
+.ball-seam { fill: none; stroke: #1f3b8a; stroke-width: 0.07; }

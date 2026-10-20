@@ -37,7 +37,7 @@ js/animation.js   frames, playback, interpolation
 
 - [x] **1. Skeleton**: `index.html`, CSS and `main.js` with a full-screen SVG and an empty toolbar. Runs locally.
 - [x] **2. Pitch**: draw the full-court pitch to scale (boundary, halfway line, 6 m lines, goals). Fits the screen in landscape and stays responsive.
-- [ ] **3. Pieces and starting state**: boat silhouette with a number, two team colours, ball. Render the starting layout from state.
+- [x] **3. Pieces and starting state**: boat silhouette with a number, two team colours, ball. Render the starting layout from state.
 - [ ] **4. Drag to move**: move boats and the ball with mouse or one finger. Keep them within the pitch area.
 - [ ] **5. Rotate boats**: a rotate handle on the selected boat (works with mouse), plus mouse wheel or keyboard shortcut.
 - [ ] **6. Reset**: Reset button with confirmation if the board has changed. Clears lines.
