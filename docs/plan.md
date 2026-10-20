@@ -57,11 +57,11 @@ js/animation.js   frames, playback, interpolation
 
 ## Phase 3 — Animation
 
-- [ ] **14. Animate mode**: enter or exit from the current board. A frame strip shows the frame count and current frame.
-- [ ] **15. Frames**: add frame (capture state), delete last frame, clear animation.
-- [ ] **16. Playback**: play/pause with smooth interpolation of position and shortest-path rotation. Step forward and back. One configurable frame duration.
-- [ ] **17. Continue after playback**: the board ends on the last frame, and adding a frame continues from there.
-- [ ] **18. Save/load animations**: in localStorage, and included in export/import.
+- [x] **14. Animate mode**: enter or exit from the current board. A frame strip shows the frame count and current frame.
+- [x] **15. Frames**: add frame (capture state), delete last frame, clear animation.
+- [x] **16. Playback**: play/pause with smooth interpolation of position and shortest-path rotation. Step forward and back. One configurable frame duration.
+- [x] **17. Continue after playback**: the board ends on the last frame, and adding a frame continues from there.
+- [x] **18. Save/load animations**: in localStorage, and included in export/import.
 
 ## Phase 4 — Frame editing (nice to have)
 

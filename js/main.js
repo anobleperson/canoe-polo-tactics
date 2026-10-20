@@ -5,6 +5,8 @@ import { PieceLayer } from './pieces.js';
 import { attachInput } from './input.js';
 import { LineLayer } from './lines.js';
 import { openLibrary } from './library.js';
+import { Animation } from './animation.js';
+import { AnimateMode } from './animate-mode.js';
 import { button, segmented, confirmDialog } from './ui.js';
 
 const svg = document.getElementById('board');
@@ -89,7 +91,28 @@ function loadState(data) {
   render();
 }
 
+// Load a saved animation and enter animate mode with it.
+function loadAnimation(data) {
+  const anim = Animation.fromJSON(data);
+  pieces.selectedId = null;
+  lines.clear();
+  animate.enter(anim);
+}
+
 function openSaved() {
+  if (animate.active) {
+    openLibrary([
+      {
+        kind: 'animations',
+        title: 'Animations',
+        getData: () => animate.anim.toJSON(),
+        onSaved: () => animate.markSaved(),
+        onLoad: loadAnimation,
+        confirmLoad: () => animate.isDirty(),
+      },
+    ]);
+    return;
+  }
   openLibrary([
     {
       kind: 'setups',
@@ -98,8 +121,29 @@ function openSaved() {
       onLoad: loadState,
       confirmLoad: boardChanged,
     },
+    { kind: 'animations', title: 'Animations', onLoad: loadAnimation, confirmLoad: boardChanged },
   ]);
 }
+
+const animate = new AnimateMode(document.getElementById('animbar'), {
+  state: () => state,
+  setState(s) {
+    state = s;
+    render();
+  },
+  deselect() {
+    pieces.selectedId = null;
+    render();
+  },
+  onToggle(active) {
+    document.body.classList.toggle('animating', active);
+    animateBtn.classList.toggle('active', active);
+    for (const b of courtToggle.el.querySelectorAll('button')) b.disabled = active;
+    resetBtn.disabled = active;
+    courtToggle.set(state.court);
+    render();
+  },
+});
 
 attachInput(svg, world, {
   state: () => state,
@@ -111,19 +155,27 @@ attachInput(svg, world, {
   },
   clamp,
   raise: (id) => pieces.raise(id),
-  changed: render,
+  changed() {
+    render();
+    animate.update();
+  },
   mode: () => mode,
+  locked: () => animate.playing,
   lines,
 });
 
 const modeToggle = segmented([['move', 'Move'], ['draw', 'Draw']], mode, setMode);
 const courtToggle = segmented([['full', 'Full'], ['half', 'Half']], state.court, setCourt);
 
+const resetBtn = button('Reset', reset);
+const animateBtn = button('Animate', () => (animate.active ? animate.exit() : animate.enter()));
+
 tools.append(
   modeToggle.el,
   button('Clear lines', () => lines.clear()),
   courtToggle.el,
-  button('Reset', reset),
+  resetBtn,
+  animateBtn,
   button('Saved', openSaved),
 );
 
@@ -138,6 +190,10 @@ window.addEventListener('keydown', (e) => {
   if (e.target.closest('input, textarea, dialog') || e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === 'd' || e.key === 'D') setMode(mode === 'draw' ? 'move' : 'draw');
   else if (e.key === 'c' || e.key === 'C') lines.clear();
+  else if (e.key === ' ' && animate.active) {
+    e.preventDefault();
+    animate.togglePlay();
+  }
 });
 
 setMode('move');

@@ -17,6 +17,7 @@ export const normAngle = (a) => ((a % 360) + 360) % 360;
 //   raise(id)          draw a piece on top
 //   changed()          state was modified, re-render
 //   mode()             'move' | 'draw'
+//   locked()           true while input should be ignored (e.g. playback)
 //   lines              LineLayer (for draw mode), optional
 //   onGestureEnd()     a drag/rotate finished (optional)
 export function attachInput(svg, world, app) {
@@ -61,6 +62,7 @@ export function attachInput(svg, world, app) {
 
   svg.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button > 0) return;
+    if (app.locked?.()) return;
     const p = toSvgPoint(world, e);
     const state = app.state();
 
@@ -153,7 +155,7 @@ export function attachInput(svg, world, app) {
     (e) => {
       const node = e.target.closest('[data-id]');
       const id = node?.dataset.id;
-      if (!id || id === 'ball') return;
+      if (!id || id === 'ball' || app.locked?.()) return;
       e.preventDefault();
       const piece = findPiece(app.state(), id);
       piece.angle = normAngle(piece.angle + Math.sign(e.deltaY) * (e.shiftKey ? 5 : ROTATE_STEP));
@@ -172,7 +174,7 @@ export function attachInput(svg, world, app) {
       app.select(null);
       return;
     }
-    if (!id) return;
+    if (!id || app.locked?.()) return;
     const piece = findPiece(app.state(), id);
     const step = e.shiftKey ? 5 : ROTATE_STEP;
     const move = e.shiftKey ? 1 : NUDGE;

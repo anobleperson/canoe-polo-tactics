@@ -63,6 +63,15 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - After playback, the user can **continue adding frames** from the last frame.
 - **Save** an animation and **load** it later for playback.
 
+### Behaviour details
+- Entering animate mode makes the current board **frame 1** automatically.
+- **Next frame** animates the move to the next frame. **Previous frame** jumps straight back.
+- **Play** from the last frame starts again at frame 1. Space bar toggles play/pause.
+- The status shows the current frame, and warns when pieces have been moved but not added as a frame.
+- While animating, court size and Reset are locked. Lines can still be drawn.
+- Leaving animate mode asks for confirmation if there are unsaved frames.
+- Saved animations can be loaded from the board (this enters animate mode) or from within animate mode.
+
 ### Frame controls
 - **Essential (first version)**: add frame, delete last frame, play/pause, step forward/back, clear animation.
 - **Frame timing**: one configurable duration that applies to every frame transition (no per-frame durations).

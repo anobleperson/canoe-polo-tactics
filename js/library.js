@@ -10,6 +10,7 @@ const fmtDate = (iso) =>
 //   kind: 'setups' | 'animations',
 //   title,
 //   getData?()       data to save; omit to hide the save row
+//   onSaved?(name)   called after saving
 //   onLoad(data)     load the item; may return false to keep the dialog open
 //   confirmLoad?()   true if loading would discard unsaved changes
 // }]
@@ -65,6 +66,7 @@ export function openLibrary(sections) {
           if (!ok) return;
         }
         storage.put(sec.kind, name, sec.getData());
+        sec.onSaved?.(name);
         status.textContent = `Saved "${name}".`;
         draw();
       };

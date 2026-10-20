@@ -55,3 +55,24 @@ export function confirmDialog(message, { ok = 'OK', cancel = 'Cancel', danger = 
     dlg.showModal();
   });
 }
+
+const ICONS = {
+  play: '<path d="M7 4.5v15l12.5-7.5z"/>',
+  pause: '<rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/>',
+  next: '<path d="M5 4.5v15l11-7.5z"/><rect x="16.5" y="4.5" width="3" height="15" rx="1"/>',
+  prev: '<path d="M19 4.5v15L8 12z"/><rect x="4.5" y="4.5" width="3" height="15" rx="1"/>',
+};
+
+// Button showing an inline SVG icon (avoids emoji rendering of media symbols).
+export function iconButton(name, label, onClick, attrs = {}) {
+  const b = button('', onClick, { 'aria-label': label, title: label, ...attrs });
+  b.classList.add('icon-btn');
+  b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
+  return b;
+}
+
+export function setIcon(btn, name, label) {
+  btn.querySelector('svg').innerHTML = ICONS[name];
+  btn.setAttribute('aria-label', label);
+  btn.title = label;
+}
