@@ -91,13 +91,13 @@ body {
 .goal-bar { stroke: #ffffff; stroke-width: 0.2; stroke-linecap: round; }
 
 /* Pieces */
-.team-a { --team: #e63946; --team-dark: #8f1d26; }
-.team-b { --team: #f4f4f4; --team-dark: #6b7a86; }
+.team-a { --team: #e63946; --team-dark: #8f1d26; --bow: #ffffff; }
+.team-b { --team: #f4f4f4; --team-dark: #6b7a86; --bow: #10232e; }
 .hit { fill: transparent; }
 .piece { cursor: grab; }
 .hull-shape { fill: var(--team); stroke: var(--team-dark); stroke-width: 0.07; }
 .cockpit { fill: #10232e; }
-.bow-tip { stroke: var(--team-dark); stroke-width: 0.12; stroke-linecap: round; }
+.bow-arrow { fill: var(--bow); stroke: var(--bow); stroke-width: 0.03; stroke-linejoin: round; }
 .paddle-shaft { stroke: #1d1d1d; stroke-width: 0.07; }
 .paddle-blade { fill: #1d1d1d; }
 .helmet { fill: var(--team); stroke: #10232e; stroke-width: 0.06; }

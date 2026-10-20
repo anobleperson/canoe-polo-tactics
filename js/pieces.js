@@ -7,16 +7,19 @@ const HW = BOAT.width / 2;
 // Distance from boat centre to the rotate handle, along the bow.
 export const HANDLE_OFFSET = HL + 0.9;
 
-// Top-down kayak, bow pointing +x. The bow is slightly finer than the stern
-// so the direction of travel is readable.
+// Top-down kayak, bow pointing +x. The bow tapers to a point and the stern
+// is blunt, so the direction of travel is readable.
 const HULL_PATH = [
   `M ${HL} 0`,
-  `C ${HL} ${-HW * 0.55}, ${HL * 0.55} ${-HW}, 0 ${-HW}`,
-  `C ${-HL * 0.6} ${-HW}, ${-HL} ${-HW * 0.75}, ${-HL} 0`,
-  `C ${-HL} ${HW * 0.75}, ${-HL * 0.6} ${HW}, 0 ${HW}`,
-  `C ${HL * 0.55} ${HW}, ${HL} ${HW * 0.55}, ${HL} 0`,
+  `C ${HL * 0.8} ${-HW * 0.25}, ${HL * 0.5} ${-HW}, 0 ${-HW}`,
+  `C ${-HL * 0.7} ${-HW}, ${-HL} ${-HW * 0.85}, ${-HL} 0`,
+  `C ${-HL} ${HW * 0.85}, ${-HL * 0.7} ${HW}, 0 ${HW}`,
+  `C ${HL * 0.5} ${HW}, ${HL * 0.8} ${HW * 0.25}, ${HL} 0`,
   'Z',
 ].join(' ');
+
+// Arrowhead on the foredeck pointing towards the bow.
+const BOW_ARROW = `M ${HL - 0.12} 0 L ${HL - 0.75} ${-HW * 0.62} L ${HL - 0.62} 0 L ${HL - 0.75} ${HW * 0.62} Z`;
 
 function paddle() {
   const reach = 1.05;
@@ -35,7 +38,7 @@ function boatElement(piece) {
     el('path', { d: HULL_PATH, class: 'select-ring' }),
     el('path', { d: HULL_PATH, class: 'hull-shape' }),
     el('ellipse', { cx: -0.05, cy: 0, rx: 0.5, ry: 0.27, class: 'cockpit' }),
-    el('path', { d: `M ${HL - 0.35} 0 L ${HL - 0.05} 0`, class: 'bow-tip' }),
+    el('path', { d: BOW_ARROW, class: 'bow-arrow' }),
     paddle(),
     el('line', { x1: HL, y1: 0, x2: HANDLE_OFFSET, y2: 0, class: 'handle-arm' }),
     el('g', { class: 'handle', 'data-handle': piece.id, transform: `translate(${HANDLE_OFFSET} 0)` }, [
