@@ -74,4 +74,5 @@ js/animation.js   frames, playback, interpolation
 - [ ] **21. GitHub Pages**: add a GitHub remote and push, turn on Pages, check it works on the iPad. Add a README with the URL and usage.
   - Done: README with usage and Pages instructions.
   - Done: pushed to git@github.com:anobleperson/canoe-polo-tactics.git (MIT License kept), live URL added to README.
-  - Left: the user enables Pages (Settings → Pages → main, / root). Then confirm https://anobleperson.github.io/canoe-polo-tactics/ loads, and test on the iPad and TV (also covers the outstanding checks in steps 11 and 13).
+  - Done: Pages enabled (main, / root). https://anobleperson.github.io/canoe-polo-tactics/ is live and serves every file.
+  - Left: the user tests on the iPad and TV (also covers the outstanding checks in steps 11 and 13).
