@@ -51,8 +51,9 @@ js/animation.js   frames, playback, interpolation
 
 ## Phase 2 — Multi-touch (nice to have)
 
-- [ ] **12. Multi-piece drag**: each finger moves its own piece at the same time.
-- [ ] **13. Two-finger rotate**: rotate a boat with a two-finger twist.
+- [x] **12. Multi-piece drag**: each finger moves its own piece at the same time.
+- [x] **13. Two-finger rotate**: rotate a boat with a two-finger twist.
+  - Hold a boat with one finger and put a second finger on the same boat or on open water, then twist. Tested with synthetic touch events; still needs checking on a real iPad.
 
 ## Phase 3 — Animation
 

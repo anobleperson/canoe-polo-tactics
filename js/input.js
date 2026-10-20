@@ -34,6 +34,31 @@ export function attachInput(svg, world, app) {
   const findPiece = (state, id) =>
     id === 'ball' ? state.ball : state.pieces.find((p) => p.id === id);
 
+  const vecAngle = (a, b) => toDeg(Math.atan2(b.y - a.y, b.x - a.x));
+
+  // A boat drag that a new finger should turn into a two-finger twist:
+  // the drag on the touched boat, or the only boat drag if the finger landed
+  // on open water. Returns [pointerId, gesture] or null.
+  function findTwistTarget(touchedId) {
+    if (touchedId === 'ball') return null;
+    const drags = [...gestures].filter(([, g]) => g.kind === 'drag' && g.id !== 'ball');
+    const twisted = new Set([...gestures.values()].filter((g) => g.kind === 'twist').map((g) => g.anchorId));
+    const free = drags.filter(([pid]) => !twisted.has(pid));
+    if (touchedId) return free.find(([, g]) => g.id === touchedId) || null;
+    return free.length === 1 && drags.length === 1 ? free[0] : null;
+  }
+
+  // Update any twist that involves this pointer.
+  function updateTwists(pointerId) {
+    for (const [pid, g] of gestures) {
+      if (g.kind !== 'twist' || (pid !== pointerId && g.anchorId !== pointerId)) continue;
+      const anchor = gestures.get(g.anchorId);
+      const piece = findPiece(app.state(), g.id);
+      if (!anchor || !piece) continue;
+      piece.angle = normAngle(g.startAngle + vecAngle(anchor.last, g.last) - g.startVec);
+    }
+  }
+
   svg.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button > 0) return;
     const p = toSvgPoint(world, e);
@@ -49,14 +74,28 @@ export function attachInput(svg, world, app) {
 
     const handle = e.target.closest('[data-handle]');
     const pieceNode = e.target.closest('[data-id]');
+    const twistTarget = findTwistTarget(pieceNode && !handle ? pieceNode.dataset.id : null);
 
-    if (handle) {
+    if (twistTarget) {
+      // Second finger on a boat that is being dragged (on the boat itself or on
+      // open water): twisting the two fingers rotates the boat.
+      const [anchorId, anchor] = twistTarget;
+      const piece = findPiece(state, anchor.id);
+      gestures.set(e.pointerId, {
+        kind: 'twist',
+        id: anchor.id,
+        anchorId,
+        last: p,
+        startVec: vecAngle(anchor.last, p),
+        startAngle: piece.angle,
+      });
+    } else if (handle) {
       const id = handle.dataset.handle;
       gestures.set(e.pointerId, { kind: 'rotate', id });
     } else if (pieceNode) {
       const id = pieceNode.dataset.id;
       const piece = findPiece(state, id);
-      gestures.set(e.pointerId, { kind: 'drag', id, dx: piece.x - p.x, dy: piece.y - p.y });
+      gestures.set(e.pointerId, { kind: 'drag', id, last: p, dx: piece.x - p.x, dy: piece.y - p.y });
       app.raise(id);
       if (id !== 'ball') app.select(id);
     } else {
@@ -77,6 +116,7 @@ export function attachInput(svg, world, app) {
       return;
     }
 
+    g.last = p;
     const piece = findPiece(app.state(), g.id);
     if (!piece) return;
 
@@ -89,6 +129,7 @@ export function attachInput(svg, world, app) {
       if (e.shiftKey) a = Math.round(a / ROTATE_STEP) * ROTATE_STEP;
       piece.angle = normAngle(a);
     }
+    updateTwists(e.pointerId);
     app.changed();
   });
 
@@ -96,6 +137,10 @@ export function attachInput(svg, world, app) {
     const g = gestures.get(e.pointerId);
     if (!g) return;
     gestures.delete(e.pointerId);
+    // A twist ends when either of its fingers lifts.
+    for (const [pid, other] of gestures) {
+      if (other.kind === 'twist' && other.anchorId === e.pointerId) gestures.delete(pid);
+    }
     if (g.kind === 'line') app.lines.end(e.pointerId);
     else app.onGestureEnd?.();
   };
