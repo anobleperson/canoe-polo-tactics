@@ -31,7 +31,9 @@ export class AnimateMode {
     this.nextBtn = iconButton('next', 'Next frame', () => this.stepForward());
     this.status = h('div', { class: 'anim-status', role: 'status' });
     this.addBtn = button('+ Add frame', () => this.addFrame(), { class: 'btn primary' });
-    this.deleteBtn = button('Delete last', () => this.deleteLast());
+    this.updateBtn = button('Update frame', () => this.updateFrame());
+    this.deleteBtn = button('Delete frame', () => this.deleteFrame());
+    this.strip = h('div', { class: 'frame-strip', role: 'tablist', 'aria-label': 'Frames' });
     this.clearBtn = button('Clear', () => this.clear());
     this.speed = h(
       'select',
@@ -46,7 +48,8 @@ export class AnimateMode {
     this.bar.append(
       button('Done', () => this.exit()),
       h('div', { class: 'anim-transport' }, [this.prevBtn, this.playBtn, this.nextBtn, this.status]),
-      h('div', { class: 'anim-edit' }, [this.addBtn, this.deleteBtn, this.speed, this.clearBtn]),
+      h('div', { class: 'anim-edit' }, [this.addBtn, this.updateBtn, this.deleteBtn, this.speed, this.clearBtn]),
+      this.strip,
     );
   }
 
@@ -100,17 +103,27 @@ export class AnimateMode {
     return !sameState(this.app.state(), this.anim.frames[this.pos]);
   }
 
+  // Add the board as a new frame after the current one (at the end when on
+  // the last frame).
   addFrame() {
     if (this.playing) return;
-    this.anim.frames.push(cloneState(this.app.state()));
-    this.pos = this.anim.last;
+    const at = Math.floor(this.pos) + 1;
+    this.anim.frames.splice(at, 0, cloneState(this.app.state()));
+    this.pos = at;
     this.update();
   }
 
-  deleteLast() {
-    if (this.playing || this.anim.frames.length < 2) return;
-    this.anim.frames.pop();
-    this.showFrame(this.anim.last);
+  // Replace the current frame with the board as it is now.
+  updateFrame() {
+    if (this.playing || !this.atFrame()) return;
+    this.anim.frames[this.pos] = cloneState(this.app.state());
+    this.update();
+  }
+
+  deleteFrame() {
+    if (this.playing || !this.atFrame() || this.anim.frames.length < 2) return;
+    this.anim.frames.splice(this.pos, 1);
+    this.showFrame(Math.min(this.pos, this.anim.last));
   }
 
   async clear() {
@@ -167,15 +180,36 @@ export class AnimateMode {
     this.playBtn.disabled = n < 2;
     this.prevBtn.disabled = playing || this.pos <= 0;
     this.nextBtn.disabled = playing || this.pos >= this.anim.last;
+    const modified = !playing && this.boardModified();
     this.addBtn.disabled = playing;
-    this.deleteBtn.disabled = playing || n < 2;
+    this.updateBtn.disabled = playing || !this.atFrame() || !modified;
+    this.deleteBtn.disabled = playing || !this.atFrame() || n < 2;
     this.clearBtn.disabled = playing;
     this.speed.disabled = playing;
 
     let text;
     if (this.atFrame()) text = `Frame ${this.pos + 1} of ${n}`;
     else text = `Frame ${Math.floor(this.pos) + 1}→${Math.ceil(this.pos) + 1} of ${n}`;
-    if (!playing && this.boardModified()) text += ' · moved, not added';
+    if (modified) text += ' · moved, not added';
     this.status.textContent = text;
+    this.updateStrip();
+  }
+
+  // Numbered chips, one per frame; tap to jump to that frame.
+  updateStrip() {
+    const n = this.anim.frames.length;
+    while (this.strip.children.length < n) {
+      const i = this.strip.children.length;
+      this.strip.append(button(String(i + 1), () => this.showFrame(i), { class: 'btn chip', role: 'tab' }));
+    }
+    while (this.strip.children.length > n) this.strip.lastChild.remove();
+    const current = Math.round(this.pos);
+    [...this.strip.children].forEach((chip, i) => {
+      const on = i === current && (this.atFrame() || this.playing);
+      chip.classList.toggle('active', on);
+      chip.setAttribute('aria-selected', on);
+      chip.disabled = this.playing;
+    });
+    this.strip.children[current]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 }

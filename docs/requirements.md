@@ -73,9 +73,9 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - Saved animations can be loaded from the board (this enters animate mode) or from within animate mode.
 
 ### Frame controls
-- **Essential (first version)**: add frame, delete last frame, play/pause, step forward/back, clear animation.
+- Add frame (inserted after the current frame), update frame, delete frame, play/pause, step forward/back, clear animation.
+- A strip of numbered frame chips: tap one to jump to that frame and edit it.
 - **Frame timing**: one configurable duration that applies to every frame transition (no per-frame durations).
-- **Nice to have (later)**: jump to any frame to edit it, and insert or delete frames in the middle.
 
 ## Non-Functional Requirements
 
@@ -95,6 +95,6 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 | Boat labels | Numbers 1–5 |
 | Lines persistence | Never saved (setups or animations) |
 | Half court | One fixed attacking half |
-| Frame editing | Basic first; full editing is nice to have. One global frame duration |
+| Frame editing | Full editing (jump, insert, update, delete). One global frame duration |
 | Reset | Boats lined up at each end facing in, ball centre; confirm before reset |
 | Main device | Tablet to TV, touch-first; mouse/keyboard also supported |

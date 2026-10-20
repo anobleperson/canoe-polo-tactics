@@ -65,8 +65,9 @@ js/animation.js   frames, playback, interpolation
 
 ## Phase 4 — Frame editing (nice to have)
 
-- [ ] **19. Jump to frame**: select any frame to view or edit it.
-- [ ] **20. Insert/delete mid-sequence**: insert a frame after the current one, delete the current frame.
+- [x] **19. Jump to frame**: select any frame to view or edit it.
+- [x] **20. Insert/delete mid-sequence**: insert a frame after the current one, delete the current frame.
+  - "+ Add frame" inserts after the current frame (appends when on the last). "Update frame" replaces the current frame with the board. "Delete frame" removes the current frame.
 
 ## Phase 5 — Deploy
 
