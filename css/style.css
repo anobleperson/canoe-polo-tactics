@@ -76,3 +76,14 @@ body {
   .title { display: none; }
   .tools { margin-left: 0; }
 }
+
+/* Pitch */
+.water { fill: #0f4c66; }
+.pitch-area { fill: #1677a0; }
+.line { stroke: #ffffff; stroke-width: 0.1; fill: none; }
+.line.six { stroke: #ffd23f; stroke-dasharray: 0.5 0.3; }
+.line.halfway { stroke-opacity: 0.9; }
+.boundary { stroke-width: 0.15; }
+.spot { fill: #ffffff; }
+.goal-net { fill: rgba(255, 255, 255, 0.35); stroke: #ffffff; stroke-width: 0.04; }
+.goal-bar { stroke: #ffffff; stroke-width: 0.2; stroke-linecap: round; }

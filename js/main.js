@@ -1,2 +1,6 @@
+import { drawPitch, applyView } from './pitch.js';
+
 const svg = document.getElementById('board');
-svg.setAttribute('viewBox', '0 0 35 23');
+
+svg.appendChild(drawPitch());
+applyView(svg, 'full');
