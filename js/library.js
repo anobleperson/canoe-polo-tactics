@@ -17,21 +17,27 @@ const fmtDate = (iso) =>
 export function openLibrary(sections) {
   const status = h('p', { class: 'library-status', role: 'status' });
   const body = h('div', { class: 'library-body' });
-  const fileInput = h('input', { type: 'file', accept: '.json,application/json', hidden: '' });
+  // No file-type filter: iOS often tags a saved .json file as plain text and
+  // would grey it out. The contents are checked on import instead.
+  const fileInput = h('input', { type: 'file', hidden: '' });
 
   const dlg = h('dialog', { class: 'modal library' }, [
     h('div', { class: 'library-header' }, [
-      h('h2', { text: 'Saved' }),
+      h('h2', { text: 'Save / Load' }),
       button('Close', () => dlg.close(), { class: 'btn' }),
     ]),
     body,
     status,
     h('div', { class: 'library-footer' }, [
-      button('Export file', () => {
-        storage.exportFile();
-        status.textContent = 'Exported all setups and animations.';
+      button('Export all', async () => {
+        const n = storage.list('setups').length + storage.list('animations').length;
+        if (!n) {
+          status.textContent = 'Nothing saved yet to export.';
+          return;
+        }
+        if (await storage.exportFile()) status.textContent = `Exported ${n} item(s) to one file.`;
       }),
-      button('Import file', () => fileInput.click()),
+      button('Import', () => fileInput.click()),
       fileInput,
     ]),
   ]);
@@ -95,6 +101,9 @@ export function openLibrary(sections) {
                   if (!ok) return;
                 }
                 if (sec.onLoad(storage.get(sec.kind, item.name)) !== false) dlg.close();
+              }),
+              button('Export', async () => {
+                if (await storage.exportFile(sec.kind, item.name)) status.textContent = `Exported "${item.name}".`;
               }),
               button('Delete', async () => {
                 const ok = await confirmDialog(`Delete "${item.name}"?`, { ok: 'Delete', danger: true });

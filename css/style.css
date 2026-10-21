@@ -181,7 +181,9 @@ body {
 .library:not([open]) { display: none; }
 .library-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .library-header h2 { margin: 0; font-size: 22px; }
-.library-body { overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
+/* Sized by its content and shrinks to scroll when the dialog is full. Not
+   flex: 1, which WebKit (iPad/iPhone Safari) collapses to zero height here. */
+.library-body { overflow-y: auto; flex: 0 1 auto; min-height: 0; -webkit-overflow-scrolling: touch; }
 .library h3 { margin: 16px 0 8px; font-size: 16px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .save-row { display: flex; gap: 8px; margin-bottom: 10px; }
 .save-row input {

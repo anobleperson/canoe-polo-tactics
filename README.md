@@ -15,7 +15,7 @@ It is a static site (HTML, CSS and JavaScript with no build step), so it can be 
 - **Draw** mode: drag to draw freehand arrows. **Clear lines** (or `C`) removes them. `D` toggles draw mode. Lines are never saved.
 - **Full / Half** switches court size. Half court shows the attacking half with the goal at the top.
 - **Reset** returns to the start-up line-up (asks first if anything has moved).
-- **Saved**: name and save the board, load or delete saves, and **Export file** / **Import file** to back them up or share them with another device.
+- **Save / Load**: name and save the board, then load, export or delete each save. **Export all** puts every setup and animation in one file, and **Import** adds the saves from a file. On an iPad/iPhone, exporting opens the share sheet (Save to Files, AirDrop, Mail and so on).
 
 **Animate**
 1. Press **Animate**. The current board becomes frame 1.
@@ -23,9 +23,9 @@ It is a static site (HTML, CSS and JavaScript with no build step), so it can be 
 3. **Play** (or Space) animates through the frames. Afterwards you can keep adding frames.
 4. Tap a numbered frame chip to jump to it. **Update frame** saves changes to that frame, **Delete frame** removes it, and **+ Add frame** inserts after it.
 5. Set the time per frame with the speed menu.
-6. Save the animation from **Saved** while in animate mode. Press **Done** to return to the board.
+6. Save the animation from **Save / Load** while in animate mode. Press **Done** to return to the board.
 
-Saves are kept in this browser's local storage. Use **Export file** to keep a backup.
+Saves are kept in this browser's local storage. Use **Export all** to keep a backup.
 
 ## Running locally
 
@@ -55,7 +55,7 @@ git config core.hooksPath tools/hooks
 
 After that it opens full screen from the icon and works with no internet connection. When you're back online it fetches updates in the background, and a "new version is ready" notice offers a reload.
 
-**Saves on iOS:** the home-screen app keeps its own saved setups and animations, separate from Safari's. To move saves between them, or between devices, use **Saved → Export file** and **Import file**.
+**Saves on iOS:** the home-screen app keeps its own saved setups and animations, separate from Safari's. To move saves between them, or between devices, use **Save / Load → Export all** and **Import**.
 
 ## Project docs
 

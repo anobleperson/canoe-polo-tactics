@@ -47,7 +47,7 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - Load a saved setup later.
 - Delete saved setups.
 - Saves are kept in the browser (localStorage).
-- **Export / import** setups and animations as a JSON file, to back up or share with teammates and other devices.
+- **Export / import** as a JSON file, to back up or share with teammates and other devices: **Export** on a single saved setup or animation, or **Export all** for everything in one file. **Import** merges a file's saves in. On iPad/iPhone, export opens the share sheet, because home-screen apps can't download files.
 
 ### Touch Support (nice to have)
 - Multi-touch gestures:
@@ -91,7 +91,7 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 | Topic | Decision |
 |---|---|
 | Team size | 5 per team, no subs bench |
-| Storage | Browser localStorage + JSON export/import |
+| Storage | Browser localStorage + JSON export/import (single item or all) |
 | Lines | Freehand only, with "clear all" |
 | Boat labels | Numbers 1–5 |
 | Lines persistence | Never saved (setups or animations) |

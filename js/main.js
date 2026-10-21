@@ -176,7 +176,7 @@ tools.append(
   courtToggle.el,
   resetBtn,
   animateBtn,
-  button('Saved', openSaved),
+  button('Save / Load', openSaved),
 );
 
 // Stop Safari page zoom and long-press menus on the board.
