@@ -33,7 +33,13 @@ Saves are kept in this browser's local storage. Use **Export file** to keep a ba
 python3 tools/serve.py
 ```
 
-Then open http://localhost:8000.
+Then open http://localhost:8000. Offline caching is turned off on localhost (add `?sw` to the URL to test it).
+
+After changing app files, regenerate the offline file list (`python3 tools/update-sw.py`), or enable the pre-commit hook that does it for you:
+
+```bash
+git config core.hooksPath tools/hooks
+```
 
 ## Deploying to GitHub Pages
 
@@ -41,7 +47,15 @@ Then open http://localhost:8000.
 2. In the repository, go to **Settings → Pages**, set **Source** to "Deploy from a branch", choose `main` and `/ (root)`, then save.
 3. The site appears at `https://<username>.github.io/<repository>/` after a minute or two.
 
-On an iPad, open the site in Safari and use **Share → Add to Home Screen** so it opens full screen like an app.
+## Offline use (iPad / iPhone)
+
+1. While online, open the live site in Safari.
+2. Tap **Share → Add to Home Screen**.
+3. Open it once from the home-screen icon while still online, so it can save itself for offline use.
+
+After that it opens full screen from the icon and works with no internet connection. When you're back online it fetches updates in the background, and a "new version is ready" notice offers a reload.
+
+**Saves on iOS:** the home-screen app keeps its own saved setups and animations, separate from Safari's. To move saves between them, or between devices, use **Saved → Export file** and **Import file**.
 
 ## Project docs
 

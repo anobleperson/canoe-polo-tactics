@@ -1,0 +1,4 @@
+#!/bin/sh
+# Keep sw.js's file list and version in step with the app files, so every
+# commit that changes the app ships a new offline cache.
+python3 tools/update-sw.py >/dev/null && git add sw.js

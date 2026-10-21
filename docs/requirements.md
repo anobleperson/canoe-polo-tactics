@@ -84,6 +84,7 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - **Primary device**: tablet (iPad, landscape) connected to a TV. Design touch-first with large, clear controls and a pitch that fills the screen.
 - **Also supported**: laptop/desktop with keyboard and mouse. Phone should work, but it is not the focus.
 - **Persistence**: browser localStorage, plus JSON file export/import.
+- **Offline**: once opened online, the app works with no connection, including from an iPhone/iPad home-screen icon. Updates download automatically next time it's online, and a "new version is ready" notice offers a reload.
 
 ## Decisions Log
 
@@ -97,4 +98,5 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 | Half court | One fixed attacking half |
 | Frame editing | Full editing (jump, insert, update, delete). One global frame duration |
 | Reset | Boats lined up at each end facing in, ball centre; confirm before reset |
+| Offline | Service worker caches all app files; installable to home screen |
 | Main device | Tablet to TV, touch-first; mouse/keyboard also supported |

@@ -246,3 +246,20 @@ body {
 }
 .btn.chip { min-width: var(--btn-h); padding: 0 8px; border-radius: 18px; flex: none; }
 .btn.chip:disabled { opacity: 1; }
+
+/* Update notice */
+.update-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 12px;
+  background: var(--toolbar);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  z-index: 10;
+}

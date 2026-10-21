@@ -7,7 +7,7 @@ import { LineLayer } from './lines.js';
 import { openLibrary } from './library.js';
 import { Animation } from './animation.js';
 import { AnimateMode } from './animate-mode.js';
-import { button, segmented, confirmDialog } from './ui.js';
+import { h, button, segmented, confirmDialog } from './ui.js';
 
 const svg = document.getElementById('board');
 const tools = document.getElementById('tools');
@@ -195,5 +195,23 @@ window.addEventListener('keydown', (e) => {
     animate.togglePlay();
   }
 });
+
+// Offline support. Skipped on localhost (unless ?sw is in the URL) so local
+// edits aren't hidden behind the cache.
+if ('serviceWorker' in navigator && (location.hostname !== 'localhost' || location.search.includes('sw'))) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+  // A new version took over: offer a reload (the running page is still the old one).
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || document.querySelector('.update-toast')) return;
+    document.body.append(
+      h('div', { class: 'update-toast', role: 'status' }, [
+        h('span', { text: 'A new version is ready.' }),
+        button('Reload', () => location.reload(), { class: 'btn primary' }),
+      ]),
+    );
+  });
+  navigator.storage?.persist?.();
+}
 
 setMode('move');
