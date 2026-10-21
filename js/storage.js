@@ -1,23 +1,124 @@
-// Saved setups and animations, kept in localStorage and exportable as JSON.
+// Saved setups and animations, exportable as JSON.
+//
+// Saves live in IndexedDB, which iOS writes to disk before a save completes.
+// A copy is also kept in localStorage; on startup whichever copy is newer is
+// used, so if one of them loses data (localStorage in iOS home-screen apps
+// can drop recent writes) the other restores it.
 //
 // Stored shape:
-// { setups: [{ name, savedAt, data }], animations: [{ name, savedAt, data }] }
+// { updatedAt, setups: [{ name, savedAt, data }], animations: [{ name, savedAt, data }] }
 
 const KEY = 'canoe-polo-tactics.v1';
 const APP_ID = 'canoe-polo-tactics';
+const DB_NAME = 'canoe-polo-tactics';
+const DB_STORE = 'library';
 export const KINDS = ['setups', 'animations'];
 
-function read() {
+const empty = () => ({ updatedAt: '', setups: [], animations: [] });
+
+function clean(parsed) {
+  if (!parsed || typeof parsed !== 'object') return null;
+  return {
+    updatedAt: parsed.updatedAt || '',
+    setups: Array.isArray(parsed.setups) ? parsed.setups : [],
+    animations: Array.isArray(parsed.animations) ? parsed.animations : [],
+  };
+}
+
+const count = (lib) => (lib ? lib.setups.length + lib.animations.length : 0);
+
+// --- IndexedDB (one record holding the whole library) ---
+
+let dbPromise = null;
+function openDb() {
+  dbPromise ??= new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return dbPromise;
+}
+
+async function idbRead() {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(DB_STORE, 'readonly').objectStore(DB_STORE).get(KEY);
+    req.onsuccess = () => resolve(clean(req.result));
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbWrite(lib) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readwrite', { durability: 'strict' });
+    tx.objectStore(DB_STORE).put(lib, KEY);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
+}
+
+// --- localStorage copy ---
+
+function lsRead() {
   try {
-    const parsed = JSON.parse(localStorage.getItem(KEY) || '{}');
-    return { setups: parsed.setups || [], animations: parsed.animations || [] };
+    return clean(JSON.parse(localStorage.getItem(KEY) || 'null'));
   } catch {
-    return { setups: [], animations: [] };
+    return null;
   }
 }
 
-function write(lib) {
-  localStorage.setItem(KEY, JSON.stringify(lib));
+function lsWrite(lib) {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(lib));
+  } catch {
+    // Storage full or unavailable; IndexedDB still has it.
+  }
+}
+
+// --- In-memory library, loaded once at startup ---
+
+let lib = empty();
+
+// Pick the newer of the two copies (an empty or missing copy never wins over
+// one with saves), then make both copies match it.
+export const ready = (async () => {
+  const fromLs = lsRead();
+  let fromDb = null;
+  try {
+    fromDb = await idbRead();
+  } catch {
+    // IndexedDB unavailable (e.g. some private modes): localStorage only.
+  }
+  const candidates = [fromDb, fromLs].filter((c) => count(c) > 0);
+  candidates.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  lib = candidates[0] || fromDb || fromLs || empty();
+  await persist().catch(() => {});
+})();
+
+async function persist() {
+  lsWrite(lib);
+  await idbWrite(lib);
+}
+
+function read() {
+  return lib;
+}
+
+// Replace the library and save both copies. Resolves once IndexedDB has it.
+async function write(next) {
+  lib = { ...next, updatedAt: new Date().toISOString() };
+  try {
+    await persist();
+  } catch {
+    // IndexedDB failed; the localStorage copy was still written.
+  }
+}
+
+export function counts() {
+  return { setups: lib.setups.length, animations: lib.animations.length };
 }
 
 export function list(kind) {
@@ -33,17 +134,17 @@ export function get(kind, name) {
 }
 
 // Save (or overwrite) an item by name.
-export function put(kind, name, data) {
-  const lib = read();
-  lib[kind] = lib[kind].filter((item) => item.name !== name);
-  lib[kind].push({ name, savedAt: new Date().toISOString(), data });
-  write(lib);
+export async function put(kind, name, data) {
+  const next = { ...read() };
+  next[kind] = next[kind].filter((item) => item.name !== name);
+  next[kind].push({ name, savedAt: new Date().toISOString(), data });
+  await write(next);
 }
 
-export function remove(kind, name) {
-  const lib = read();
-  lib[kind] = lib[kind].filter((item) => item.name !== name);
-  write(lib);
+export async function remove(kind, name) {
+  const next = { ...read() };
+  next[kind] = next[kind].filter((item) => item.name !== name);
+  await write(next);
 }
 
 // Save items as one JSON file: everything by default, or a single item when
@@ -51,7 +152,7 @@ export function remove(kind, name) {
 // apps ignore downloads) this opens the share sheet, so the file can go to
 // Files, AirDrop, Mail, etc. Returns false if the user cancelled.
 export async function exportFile(kind = null, itemName = null) {
-  let items = read();
+  let items = { setups: read().setups, animations: read().animations };
   let name = `canoe-polo-tactics-${new Date().toISOString().slice(0, 10)}.json`;
   if (kind) {
     items = { setups: [], animations: [] };
@@ -95,19 +196,19 @@ export async function importFile(file) {
     payload = null;
   }
   if (payload?.app !== APP_ID) throw new Error('This is not a Canoe Polo Tactics file.');
-  const lib = read();
-  const counts = { setups: 0, animations: 0 };
+  const next = { ...read(), setups: [...read().setups], animations: [...read().animations] };
+  const added = { setups: 0, animations: 0 };
   for (const kind of KINDS) {
     for (const item of payload[kind] || []) {
       if (!item?.name || !item.data) continue;
-      const same = lib[kind].find((x) => x.name === item.name);
+      const same = next[kind].find((x) => x.name === item.name);
       if (same && JSON.stringify(same.data) === JSON.stringify(item.data)) continue;
       let name = item.name;
-      for (let n = 2; lib[kind].some((x) => x.name === name); n++) name = `${item.name} (${n})`;
-      lib[kind].push({ ...item, name });
-      counts[kind]++;
+      for (let n = 2; next[kind].some((x) => x.name === name); n++) name = `${item.name} (${n})`;
+      next[kind].push({ ...item, name });
+      added[kind]++;
     }
   }
-  write(lib);
-  return counts;
+  await write(next);
+  return added;
 }

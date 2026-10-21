@@ -46,7 +46,7 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - Save the current board setup (piece positions, rotations, court mode) under a name.
 - Load a saved setup later.
 - Delete saved setups.
-- Saves are kept in the browser (localStorage).
+- Saves are kept on the device (IndexedDB, with a localStorage copy).
 - **Export / import** as a JSON file, to back up or share with teammates and other devices: **Export** on a single saved setup or animation, or **Export all** for everything in one file. **Import** merges a file's saves in. On iPad/iPhone, export opens the share sheet, because home-screen apps can't download files.
 
 ### Touch Support (nice to have)
@@ -83,7 +83,7 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - **Hosting**: deploy via GitHub Pages from this repository.
 - **Primary device**: tablet (iPad, landscape) connected to a TV. Design touch-first with large, clear controls and a pitch that fills the screen.
 - **Also supported**: laptop/desktop with keyboard and mouse. Phone should work, but it is not the focus.
-- **Persistence**: browser localStorage, plus JSON file export/import.
+- **Persistence**: saves are stored in IndexedDB (written to disk before a save completes), with a copy in localStorage. On startup the newer copy is used, so losing either one doesn't lose saves. JSON file export/import for backups.
 - **Offline**: once opened online, the app works with no connection, including from an iPhone/iPad home-screen icon. Updates download automatically next time it's online, and a "new version is ready" notice offers a reload.
 
 ## Decisions Log
@@ -91,7 +91,7 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 | Topic | Decision |
 |---|---|
 | Team size | 5 per team, no subs bench |
-| Storage | Browser localStorage + JSON export/import (single item or all) |
+| Storage | IndexedDB + localStorage copy, JSON export/import (single item or all) |
 | Lines | Freehand only, with "clear all" |
 | Boat labels | Numbers 1–5 |
 | Lines persistence | Never saved (setups or animations) |

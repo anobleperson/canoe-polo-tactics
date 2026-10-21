@@ -14,7 +14,8 @@ const fmtDate = (iso) =>
 //   onLoad(data)     load the item; may return false to keep the dialog open
 //   confirmLoad?()   true if loading would discard unsaved changes
 // }]
-export function openLibrary(sections) {
+export async function openLibrary(sections) {
+  await storage.ready;
   const status = h('p', { class: 'library-status', role: 'status' });
   const body = h('div', { class: 'library-body' });
   // No file-type filter: iOS often tags a saved .json file as plain text and
@@ -30,7 +31,8 @@ export function openLibrary(sections) {
     status,
     h('div', { class: 'library-footer' }, [
       button('Export all', async () => {
-        const n = storage.list('setups').length + storage.list('animations').length;
+        const c = storage.counts();
+        const n = c.setups + c.animations;
         if (!n) {
           status.textContent = 'Nothing saved yet to export.';
           return;
@@ -71,7 +73,7 @@ export function openLibrary(sections) {
           const ok = await confirmDialog(`Replace the saved "${name}"?`, { ok: 'Replace' });
           if (!ok) return;
         }
-        storage.put(sec.kind, name, sec.getData());
+        await storage.put(sec.kind, name, sec.getData());
         sec.onSaved?.(name);
         status.textContent = `Saved "${name}".`;
         draw();
@@ -108,7 +110,7 @@ export function openLibrary(sections) {
               button('Delete', async () => {
                 const ok = await confirmDialog(`Delete "${item.name}"?`, { ok: 'Delete', danger: true });
                 if (!ok) return;
-                storage.remove(sec.kind, item.name);
+                await storage.remove(sec.kind, item.name);
                 status.textContent = `Deleted "${item.name}".`;
                 draw();
               }, { class: 'btn danger-outline' }),
@@ -125,6 +127,8 @@ export function openLibrary(sections) {
   }
 
   draw();
+  const c = storage.counts();
+  status.textContent = `${c.setups} setup(s) and ${c.animations} animation(s) saved on this device.`;
   dlg.addEventListener('close', () => dlg.remove());
   document.body.append(dlg);
   dlg.showModal();
