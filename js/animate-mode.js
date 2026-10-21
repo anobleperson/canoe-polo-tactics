@@ -48,8 +48,8 @@ export class AnimateMode {
     this.bar.append(
       button('Done', () => this.exit()),
       h('div', { class: 'anim-transport' }, [this.prevBtn, this.playBtn, this.nextBtn, this.status]),
-      h('div', { class: 'anim-edit' }, [this.addBtn, this.updateBtn, this.deleteBtn, this.speed, this.clearBtn]),
       this.strip,
+      h('div', { class: 'anim-edit' }, [this.addBtn, this.updateBtn, this.deleteBtn, this.speed, this.clearBtn]),
     );
   }
 

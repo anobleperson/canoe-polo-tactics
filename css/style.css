@@ -1,4 +1,5 @@
 :root {
+  --btn-h: 36px;
   --bg: #0b2533;
   --toolbar: #102f40;
   --btn: #1b4258;
@@ -37,15 +38,15 @@ body {
 #toolbar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 8px 12px;
+  gap: 12px;
+  padding: 5px 10px;
   background: var(--toolbar);
   touch-action: manipulation;
   flex: none;
 }
 
 .title {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   margin: 0;
   white-space: nowrap;
@@ -54,7 +55,7 @@ body {
 .tools {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
   margin-left: auto;
 }
@@ -122,15 +123,15 @@ body {
 
 /* Buttons */
 .btn {
-  min-height: 44px;
-  min-width: 44px;
-  padding: 0 16px;
+  min-height: var(--btn-h);
+  min-width: var(--btn-h);
+  padding: 0 12px;
   border: none;
   border-radius: var(--radius);
   background: var(--btn);
   color: var(--text);
   font: inherit;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   touch-action: manipulation;
@@ -211,35 +212,37 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 16px;
-  padding: 8px 12px;
+  gap: 6px 12px;
+  padding: 5px 10px;
   background: var(--toolbar);
   touch-action: manipulation;
   flex: none;
 }
 #animbar[hidden] { display: none; }
-.anim-transport, .anim-edit { display: flex; align-items: center; gap: 8px; }
-.anim-edit { margin-left: auto; }
-.anim-status { font-size: 15px; color: var(--muted); min-width: 10em; padding-left: 4px; }
-.icon-btn { padding: 0; width: 52px; display: inline-flex; align-items: center; justify-content: center; }
-.icon-btn svg { width: 24px; height: 24px; fill: currentColor; }
+.anim-transport, .anim-edit { display: flex; align-items: center; gap: 6px; }
+.anim-status { font-size: 13px; color: var(--muted); min-width: 9em; padding-left: 4px; }
+.icon-btn { padding: 0; width: 42px; display: inline-flex; align-items: center; justify-content: center; }
+.icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
 .speed {
-  min-height: 44px;
-  padding: 0 10px;
+  min-height: var(--btn-h);
+  padding: 0 8px;
   border: none;
   border-radius: var(--radius);
   background: var(--btn);
   color: var(--text);
   font: inherit;
-  font-size: 16px;
+  font-size: 14px;
 }
+/* Frame chips sit between the transport and edit controls, wrapping to
+   their own row only on narrow screens. */
 .frame-strip {
-  flex-basis: 100%;
+  flex: 1 1 120px;
+  min-width: 0;
   display: flex;
-  gap: 6px;
+  gap: 4px;
   overflow-x: auto;
   padding-bottom: 2px;
   scrollbar-width: thin;
 }
-.btn.chip { min-width: 44px; padding: 0 10px; border-radius: 22px; flex: none; }
+.btn.chip { min-width: var(--btn-h); padding: 0 8px; border-radius: 18px; flex: none; }
 .btn.chip:disabled { opacity: 1; }
