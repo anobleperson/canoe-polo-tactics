@@ -61,7 +61,7 @@ function boatElement(piece) {
 function ballElement() {
   const r = 0.35;
   return el('g', { class: 'piece ball', 'data-id': 'ball' }, [
-    el('circle', { cx: 0, cy: 0, r: 0.9, class: 'hit' }),
+    el('circle', { cx: 0, cy: 0, r: 0.65, class: 'hit' }),
     el('circle', { cx: 0, cy: 0, r, class: 'ball-body' }),
     el('path', { d: `M ${-r} -0.1 Q 0 0.25 ${r} -0.1`, class: 'ball-seam' }),
     el('path', { d: `M -0.1 ${-r} Q 0.22 0 -0.1 ${r}`, class: 'ball-seam' }),
@@ -111,9 +111,12 @@ export class PieceLayer {
     }
   }
 
-  // Draw a piece above the others (e.g. while dragging).
+  // Draw a piece above the other boats (e.g. while dragging). The ball always
+  // stays on top so it can't get lost under a boat.
   raise(id) {
     const node = this.nodes.get(id);
     if (node) this.group.appendChild(node);
+    const ball = this.nodes.get('ball');
+    if (ball && id !== 'ball') this.group.appendChild(ball);
   }
 }
