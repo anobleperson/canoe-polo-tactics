@@ -1,7 +1,7 @@
 import { drawPitch, applyView, viewRect, viewRotation } from './pitch.js';
 import { el } from './svg.js';
 import { startingState, sameState, cloneState, normaliseState } from './state.js';
-import { PieceLayer } from './pieces.js';
+import { PieceLayer, pieceDefs } from './pieces.js';
 import { attachInput } from './input.js';
 import { LineLayer } from './lines.js';
 import { openLibrary } from './library.js';
@@ -19,7 +19,7 @@ let mode = 'move';
 
 // Everything on the board lives in one group, in pitch metres.
 const world = el('g', { id: 'world' });
-svg.append(el('defs', {}, [LineLayer.defs()]), world);
+svg.append(el('defs', {}, [LineLayer.defs(), pieceDefs()]), world);
 world.appendChild(drawPitch());
 const lines = new LineLayer(world);
 const pieces = new PieceLayer(world);

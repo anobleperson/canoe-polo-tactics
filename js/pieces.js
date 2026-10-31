@@ -7,19 +7,31 @@ const HW = BOAT.width / 2;
 // Distance from boat centre to the rotate handle, along the bow.
 export const HANDLE_OFFSET = HL + 0.9;
 
-// Top-down kayak, bow pointing +x. Both ends are rounded like a real polo
-// boat; the bow arrow shows the direction of travel.
+// Top-down polo boat, bow pointing +x: widest at the cockpit, tapering in
+// gently curved lines to narrow, rounded ends.
+const END_R = 0.11; // radius of the rounded ends
+const BUMPER = 0.22; // length of the darker bumper at each end
 const HULL_PATH = [
-  `M ${HL} 0`,
-  `C ${HL} ${-HW * 0.85}, ${HL * 0.7} ${-HW}, 0 ${-HW}`,
-  `C ${-HL * 0.7} ${-HW}, ${-HL} ${-HW * 0.85}, ${-HL} 0`,
-  `C ${-HL} ${HW * 0.85}, ${-HL * 0.7} ${HW}, 0 ${HW}`,
-  `C ${HL * 0.7} ${HW}, ${HL} ${HW * 0.85}, ${HL} 0`,
+  `M ${HL - END_R} ${-END_R}`,
+  `C ${HL * 0.55} ${-HW * 0.7}, 0.6 ${-HW}, 0 ${-HW}`,
+  `C -0.6 ${-HW}, ${-HL * 0.55} ${-HW * 0.7}, ${-HL + END_R} ${-END_R}`,
+  `A ${END_R} ${END_R} 0 0 0 ${-HL + END_R} ${END_R}`,
+  `C ${-HL * 0.55} ${HW * 0.7}, -0.6 ${HW}, 0 ${HW}`,
+  `C 0.6 ${HW}, ${HL * 0.55} ${HW * 0.7}, ${HL - END_R} ${END_R}`,
+  `A ${END_R} ${END_R} 0 0 0 ${HL - END_R} ${-END_R}`,
   'Z',
 ].join(' ');
 
+// Cockpit: a rounded opening with a raised rim, centred on the paddler.
+const COCKPIT = { rx: 0.52, ry: 0.27 };
+
 // Arrowhead on the foredeck pointing towards the bow.
-const BOW_ARROW = `M ${HL - 0.15} 0 L ${HL - 0.75} ${-HW * 0.6} L ${HL - 0.62} 0 L ${HL - 0.75} ${HW * 0.6} Z`;
+const BOW_ARROW = `M ${HL - 0.32} 0 L ${HL - 0.85} ${-0.17} L ${HL - 0.74} 0 L ${HL - 0.85} ${0.17} Z`;
+
+// Shared clip path so the bumpers follow the hull outline.
+export function pieceDefs() {
+  return el('clipPath', { id: 'hull-clip' }, [el('path', { d: HULL_PATH })]);
+}
 
 function paddle() {
   const reach = 1.05;
@@ -37,7 +49,14 @@ function boatElement(piece) {
     el('ellipse', { cx: 0, cy: 0, rx: HL + 0.25, ry: 1.0, class: 'hit' }),
     el('path', { d: HULL_PATH, class: 'select-ring' }),
     el('path', { d: HULL_PATH, class: 'hull-shape' }),
-    el('ellipse', { cx: -0.05, cy: 0, rx: 0.5, ry: 0.27, class: 'cockpit' }),
+    el('g', { 'clip-path': 'url(#hull-clip)' }, [
+      el('rect', { x: HL - BUMPER, y: -HW, width: BUMPER, height: 2 * HW, class: 'bumper' }),
+      el('rect', { x: -HL, y: -HW, width: BUMPER, height: 2 * HW, class: 'bumper' }),
+    ]),
+    el('line', { x1: COCKPIT.rx, y1: 0, x2: HL - BUMPER, y2: 0, class: 'deck-ridge' }),
+    el('line', { x1: -COCKPIT.rx, y1: 0, x2: -HL + BUMPER, y2: 0, class: 'deck-ridge' }),
+    el('ellipse', { cx: 0, cy: 0, rx: COCKPIT.rx + 0.05, ry: COCKPIT.ry + 0.05, class: 'cockpit-rim' }),
+    el('ellipse', { cx: 0, cy: 0, ...COCKPIT, class: 'cockpit' }),
     el('path', { d: BOW_ARROW, class: 'bow-arrow' }),
     paddle(),
     el('line', { x1: HL, y1: 0, x2: HANDLE_OFFSET, y2: 0, class: 'handle-arm' }),

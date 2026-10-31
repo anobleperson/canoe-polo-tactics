@@ -5,7 +5,7 @@
 // Run that script after changing any app file, so devices pick up the update.
 
 // BEGIN GENERATED
-const VERSION = '044986ef8700';
+const VERSION = '006dad601a55';
 const FILES = [
   './',
   'css/style.css',
