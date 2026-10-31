@@ -101,7 +101,19 @@ export async function openLibrary(sections, { onOpenLink } = {}) {
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') save();
       });
-      parts.push(h('div', { class: 'save-row' }, [input, button('Save', save, { class: 'btn primary' })]));
+      // Share what's on the board now, without saving it first.
+      const shareCurrent = async () => {
+        const name = input.value.trim() || (sec.kind === 'setups' ? 'Shared setup' : 'Shared animation');
+        const msg = await sendLink(await shareUrl(sec.kind, name, sec.getData()), name);
+        if (msg) status.textContent = msg;
+      };
+      parts.push(
+        h('div', { class: 'save-row' }, [
+          input,
+          button('Save', save, { class: 'btn primary' }),
+          button('Share', shareCurrent, { title: 'Share the current board as a link without saving' }),
+        ]),
+      );
     }
 
     if (!items.length) {

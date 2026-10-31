@@ -50,6 +50,7 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - **Export / import** as a JSON file, to back up or share with teammates and other devices: **Export** on a single saved setup or animation, or **Export all** for everything in one file. **Import** merges a file's saves in. On iPad/iPhone, export opens the share sheet, because home-screen apps can't download files.
 
 ### Share Links
+- **Share** next to **Save** shares the current board (or the current animation, in animate mode) without saving it first.
 - **Share** on a saved setup or animation creates a URL containing it (packed and compressed after `#share=`, so no server is needed and it works offline). Positions are kept to 10 cm and angles to 1°.
 - Touch devices use the share sheet; elsewhere the link is copied to the clipboard.
 - Opening a share link offers **Open** or **Open & save**. Name clashes are saved as "Name (2)".

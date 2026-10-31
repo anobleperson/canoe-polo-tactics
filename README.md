@@ -16,7 +16,7 @@ It is a static site (HTML, CSS and JavaScript with no build step), so it can be 
 - **Full / Half** switches court size. Half court shows the attacking half with the goal at the top.
 - **Reset** returns to the start-up line-up (asks first if anything has moved).
 - **Save / Load**: name and save the board, then load, export or delete each save. **Export all** puts every setup and animation in one file, and **Import** adds the saves from a file. On an iPad/iPhone, exporting opens the share sheet (Save to Files, AirDrop, Mail and so on).
-- **Share a link**: **Share** on a saved setup or animation makes a link containing it. On an iPad/iPhone this opens the share sheet (Messages, WhatsApp, Mail…); on a computer the link is copied. Whoever opens the link is offered **Open** or **Open & save**.
+- **Share a link**: **Share** on a saved setup or animation makes a link containing it. The **Share** button next to **Save** shares the current board (or, in animate mode, the current animation) without saving it, using the name typed in the box if there is one. On an iPad/iPhone this opens the share sheet (Messages, WhatsApp, Mail…); on a computer the link is copied. Whoever opens the link is offered **Open** or **Open & save**.
   - On iOS, links open in Safari rather than the home-screen app. To get a shared play into the home-screen app, copy the link, open the app, and paste it into **Save / Load → Paste a shared link**.
 
 **Animate**
