@@ -11,7 +11,7 @@ export const HANDLE_OFFSET = HL + 0.9;
 // below are measured from a photo of a real polo boat (scaled to 3 m long):
 // [x, half-width] in metres, for one side, bow to stern. The widest point
 // (0.61 m) is level with the back of the cockpit.
-const BUMPER = 0.1; // length of the darker bumper at each end
+const BUMPER = 0.18; // length of the dark rubber bumper at each end
 const PADDLER_FORWARD = 0.1; // paddler's head is this far ahead of boat centre
 const HULL_SIDE = [
   [1.5, 0], [1.496, 0.035], [1.492, 0.045], [1.484, 0.063], [1.471, 0.079],
