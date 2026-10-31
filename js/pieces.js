@@ -69,14 +69,18 @@ export function pieceDefs() {
   return el('clipPath', { id: 'hull-clip' }, [el('path', { d: HULL_PATH })]);
 }
 
+// Paddle across the boat: 2 m tip to tip, with blades about 44 cm long.
+const PADDLE = { length: 2, bladeLength: 0.44, bladeWidth: 0.18 };
+
 function paddle() {
-  const reach = 1.05;
+  const tip = PADDLE.length / 2;
+  const bladeCentre = tip - PADDLE.bladeLength / 2;
   const blade = (y) =>
-    el('ellipse', { cx: 0.08, cy: y, rx: 0.1, ry: 0.22, class: 'paddle-blade' });
+    el('ellipse', { cx: 0.08, cy: y, rx: PADDLE.bladeWidth / 2, ry: PADDLE.bladeLength / 2, class: 'paddle-blade' });
   return el('g', { class: 'paddle' }, [
-    el('line', { x1: 0.08, y1: -reach, x2: 0.08, y2: reach, class: 'paddle-shaft' }),
-    blade(-reach),
-    blade(reach),
+    el('line', { x1: 0.08, y1: -bladeCentre, x2: 0.08, y2: bladeCentre, class: 'paddle-shaft' }),
+    blade(-bladeCentre),
+    blade(bladeCentre),
   ]);
 }
 
