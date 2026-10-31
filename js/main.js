@@ -7,7 +7,9 @@ import { LineLayer } from './lines.js';
 import { openLibrary } from './library.js';
 import { Animation } from './animation.js';
 import { AnimateMode } from './animate-mode.js';
-import { h, button, segmented, confirmDialog } from './ui.js';
+import { readShare } from './share.js';
+import * as storage from './storage.js';
+import { h, button, segmented, confirmDialog, choiceDialog } from './ui.js';
 
 const svg = document.getElementById('board');
 const tools = document.getElementById('tools');
@@ -99,7 +101,40 @@ function loadAnimation(data) {
   animate.enter(anim);
 }
 
+// Open a shared link (from the address bar or pasted into Save / Load).
+// Resolves false if the text isn't a share link.
+async function openShared(text) {
+  let shared;
+  try {
+    shared = await readShare(text);
+  } catch (err) {
+    await confirmDialog(`Couldn't open the shared link. ${err.message}`, { ok: 'OK', cancel: 'Close' });
+    return true;
+  }
+  if (!shared) {
+    await confirmDialog("That doesn't look like a Canoe Polo Tactics share link.", { ok: 'OK', cancel: 'Close' });
+    return false;
+  }
+  const what = shared.kind === 'setups' ? 'setup' : 'animation';
+  const busy = animate.active ? animate.isDirty() : boardChanged();
+  const choice = await choiceDialog(
+    `Shared ${what}: "${shared.name}".${busy ? ' Opening it replaces what is on the board now.' : ''}`,
+    [
+      { label: 'Cancel', value: null },
+      { label: 'Open', value: 'open' },
+      { label: 'Open & save', value: 'save', primary: true },
+    ],
+  );
+  if (!choice) return true;
+  if (choice === 'save') await storage.putUnique(shared.kind, shared.name, shared.data);
+  if (animate.active && shared.kind === 'setups') animate.leave();
+  if (shared.kind === 'setups') loadState(shared.data);
+  else loadAnimation(shared.data);
+  return true;
+}
+
 function openSaved() {
+  const linkOptions = { onOpenLink: openShared };
   if (animate.active) {
     openLibrary([
       {
@@ -110,7 +145,7 @@ function openSaved() {
         onLoad: loadAnimation,
         confirmLoad: () => animate.isDirty(),
       },
-    ]);
+    ], linkOptions);
     return;
   }
   openLibrary([
@@ -122,7 +157,7 @@ function openSaved() {
       confirmLoad: boardChanged,
     },
     { kind: 'animations', title: 'Animations', onLoad: loadAnimation, confirmLoad: boardChanged },
-  ]);
+  ], linkOptions);
 }
 
 const animate = new AnimateMode(document.getElementById('animbar'), {
@@ -215,3 +250,14 @@ if ('serviceWorker' in navigator && (location.hostname !== 'localhost' || locati
 }
 
 setMode('move');
+
+// Opened from a share link (on load, or when a link is opened while the app
+// is already showing): offer to open it, then tidy the address bar.
+function checkShareLink() {
+  if (!location.hash.startsWith('#share=')) return;
+  const link = location.href;
+  history.replaceState(null, '', location.pathname + location.search);
+  storage.ready.then(() => openShared(link));
+}
+window.addEventListener('hashchange', checkShareLink);
+checkShareLink();

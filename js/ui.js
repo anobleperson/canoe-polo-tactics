@@ -56,6 +56,33 @@ export function confirmDialog(message, { ok = 'OK', cancel = 'Cancel', danger = 
   });
 }
 
+// Modal dialog offering several choices. choices: [{ label, value, primary? }].
+// Resolves to the chosen value, or null if dismissed.
+export function choiceDialog(message, choices) {
+  return new Promise((resolve) => {
+    let result = null;
+    const dlg = h('dialog', { class: 'modal' }, [
+      h('p', { text: message }),
+      h(
+        'div',
+        { class: 'modal-actions' },
+        choices.map((c) =>
+          button(c.label, () => {
+            result = c.value;
+            dlg.close();
+          }, { class: c.primary ? 'btn primary' : 'btn' }),
+        ),
+      ),
+    ]);
+    dlg.addEventListener('close', () => {
+      resolve(result);
+      dlg.remove();
+    });
+    document.body.append(dlg);
+    dlg.showModal();
+  });
+}
+
 const ICONS = {
   play: '<path d="M7 4.5v15l12.5-7.5z"/>',
   pause: '<rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/>',

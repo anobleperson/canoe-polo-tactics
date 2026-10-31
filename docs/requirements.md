@@ -49,6 +49,13 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 - Saves are kept on the device (IndexedDB, with a localStorage copy).
 - **Export / import** as a JSON file, to back up or share with teammates and other devices: **Export** on a single saved setup or animation, or **Export all** for everything in one file. **Import** merges a file's saves in. On iPad/iPhone, export opens the share sheet, because home-screen apps can't download files.
 
+### Share Links
+- **Share** on a saved setup or animation creates a URL containing it (packed and compressed after `#share=`, so no server is needed and it works offline). Positions are kept to 10 cm and angles to 1°.
+- Touch devices use the share sheet; elsewhere the link is copied to the clipboard.
+- Opening a share link offers **Open** or **Open & save**. Name clashes are saved as "Name (2)".
+- Links can also be pasted into **Save / Load → Paste a shared link**, which is how a link gets into an iOS home-screen app (iOS opens links in Safari).
+- Lines are not included, since they are never saved.
+
 ### Touch Support (nice to have)
 - Multi-touch gestures:
   - Two-finger rotate on a boat.
@@ -99,4 +106,5 @@ A self-contained website for demonstrating canoe polo tactics to a team, similar
 | Frame editing | Full editing (jump, insert, update, delete). One global frame duration |
 | Reset | Boats lined up at each end facing in, ball centre; confirm before reset |
 | Offline | Service worker caches all app files; installable to home screen |
+| Sharing | URL with the data in the #fragment; open, or open & save |
 | Main device | Tablet to TV, touch-first; mouse/keyboard also supported |

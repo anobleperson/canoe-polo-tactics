@@ -5,7 +5,7 @@
 // Run that script after changing any app file, so devices pick up the update.
 
 // BEGIN GENERATED
-const VERSION = '28570ab7d124';
+const VERSION = 'bc0ff2da2f45';
 const FILES = [
   './',
   'css/style.css',
@@ -22,6 +22,7 @@ const FILES = [
   'js/main.js',
   'js/pieces.js',
   'js/pitch.js',
+  'js/share.js',
   'js/state.js',
   'js/storage.js',
   'js/svg.js',

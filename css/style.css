@@ -186,7 +186,7 @@ body {
 .library-body { overflow-y: auto; flex: 0 1 auto; min-height: 0; -webkit-overflow-scrolling: touch; }
 .library h3 { margin: 16px 0 8px; font-size: 16px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .save-row { display: flex; gap: 8px; margin-bottom: 10px; }
-.save-row input {
+.save-row input, .link-row input {
   flex: 1;
   min-height: 44px;
   padding: 0 12px;
@@ -208,6 +208,7 @@ body {
 .empty { color: var(--muted); font-size: 15px; margin: 4px 0; }
 .library-status { min-height: 1.2em; font-size: 15px; color: var(--muted); margin: 10px 0; }
 .library-footer { display: flex; gap: 8px; }
+.link-row { margin: 10px 0 0; }
 
 /* Animation bar */
 #animbar {

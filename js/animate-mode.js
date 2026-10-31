@@ -76,6 +76,11 @@ export class AnimateMode {
       const ok = await confirmDialog('Leave animation? Unsaved frames will be lost.', { ok: 'Leave', danger: true });
       if (!ok) return;
     }
+    this.leave();
+  }
+
+  // Leave animate mode without asking.
+  leave() {
     this.player.stop();
     this.active = false;
     this.anim = null;

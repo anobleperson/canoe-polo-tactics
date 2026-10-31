@@ -141,6 +141,18 @@ export async function put(kind, name, data) {
   await write(next);
 }
 
+// Save under name, or "name (2)" etc. if that name holds something different.
+// Returns the name used (an identical existing item is reused, not copied).
+export async function putUnique(kind, name, data) {
+  const json = JSON.stringify(data);
+  const same = read()[kind].find((x) => x.name === name);
+  if (same && JSON.stringify(same.data) === json) return name;
+  let unique = name;
+  for (let n = 2; exists(kind, unique); n++) unique = `${name} (${n})`;
+  await put(kind, unique, data);
+  return unique;
+}
+
 export async function remove(kind, name) {
   const next = { ...read() };
   next[kind] = next[kind].filter((item) => item.name !== name);

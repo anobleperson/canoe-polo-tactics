@@ -1,5 +1,6 @@
 import { h, button, confirmDialog } from './ui.js';
 import * as storage from './storage.js';
+import { shareUrl, sendLink } from './share.js';
 
 const fmtDate = (iso) =>
   new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
@@ -14,13 +15,18 @@ const fmtDate = (iso) =>
 //   onLoad(data)     load the item; may return false to keep the dialog open
 //   confirmLoad?()   true if loading would discard unsaved changes
 // }]
-export async function openLibrary(sections) {
+// onOpenLink(text): open a pasted share link; resolves true if it was handled.
+export async function openLibrary(sections, { onOpenLink } = {}) {
   await storage.ready;
   const status = h('p', { class: 'library-status', role: 'status' });
   const body = h('div', { class: 'library-body' });
   // No file-type filter: iOS often tags a saved .json file as plain text and
   // would grey it out. The contents are checked on import instead.
   const fileInput = h('input', { type: 'file', hidden: '' });
+  const linkInput = h('input', { type: 'url', placeholder: 'Paste a shared link', enterkeyhint: 'go' });
+  linkInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') openLink();
+  });
 
   const dlg = h('dialog', { class: 'modal library' }, [
     h('div', { class: 'library-header' }, [
@@ -42,7 +48,21 @@ export async function openLibrary(sections) {
       button('Import', () => fileInput.click()),
       fileInput,
     ]),
+    h('div', { class: 'save-row link-row' }, [linkInput, button('Open link', openLink)]),
   ]);
+
+  async function openLink() {
+    const text = linkInput.value.trim();
+    if (!text) {
+      linkInput.focus();
+      return;
+    }
+    dlg.close();
+    if (!(await onOpenLink(text))) {
+      // Not a share link: reopen so the message is seen.
+      openLibrary(sections, { onOpenLink });
+    }
+  }
 
   fileInput.addEventListener('change', async () => {
     const file = fileInput.files[0];
@@ -103,6 +123,11 @@ export async function openLibrary(sections) {
                   if (!ok) return;
                 }
                 if (sec.onLoad(storage.get(sec.kind, item.name)) !== false) dlg.close();
+              }),
+              button('Share', async () => {
+                const url = await shareUrl(sec.kind, item.name, storage.get(sec.kind, item.name));
+                const msg = await sendLink(url, item.name);
+                if (msg) status.textContent = msg;
               }),
               button('Export', async () => {
                 if (await storage.exportFile(sec.kind, item.name)) status.textContent = `Exported "${item.name}".`;
