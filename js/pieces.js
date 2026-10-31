@@ -33,8 +33,6 @@ const COCKPIT_SIDE = [
   [-0.188, 0.185], [-0.2, 0.165], [-0.212, 0.137], [-0.22, 0.11], [-0.224, 0.094],
   [-0.228, 0.069], [-0.23, 0],
 ];
-const COCKPIT_FRONT = COCKPIT_SIDE[0][0];
-const COCKPIT_BACK = COCKPIT_SIDE[COCKPIT_SIDE.length - 1][0];
 
 // Smooth closed curve through points (Catmull-Rom spline as cubic Béziers).
 function smoothClosedPath(pts) {
@@ -96,8 +94,6 @@ function boatElement(piece) {
         el('rect', { x: HL - BUMPER, y: -HW, width: BUMPER, height: 2 * HW, class: 'bumper' }),
         el('rect', { x: -HL, y: -HW, width: BUMPER, height: 2 * HW, class: 'bumper' }),
       ]),
-      el('line', { x1: COCKPIT_FRONT, y1: 0, x2: HL - BUMPER, y2: 0, class: 'deck-ridge' }),
-      el('line', { x1: COCKPIT_BACK, y1: 0, x2: -HL + BUMPER, y2: 0, class: 'deck-ridge' }),
       el('path', { d: COCKPIT_PATH, class: 'cockpit' }),
       el('path', { d: BOW_ARROW, class: 'bow-arrow' }),
     ]),
