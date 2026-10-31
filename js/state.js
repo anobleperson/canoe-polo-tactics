@@ -1,6 +1,6 @@
 import { PITCH } from './pitch.js';
 
-export const BOAT = { length: 3, width: 0.75 };
+export const BOAT = { length: 3, width: 0.61 };
 export const PLAYERS_PER_TEAM = 5;
 export const TEAMS = ['a', 'b'];
 

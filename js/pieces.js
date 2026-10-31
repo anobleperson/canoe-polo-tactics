@@ -7,26 +7,62 @@ const HW = BOAT.width / 2;
 // Distance from boat centre to the rotate handle, along the bow.
 export const HANDLE_OFFSET = HL + 0.9;
 
-// Top-down polo boat, bow pointing +x: widest at the cockpit, tapering in
-// gently curved lines to narrow, rounded ends.
-const END_R = 0.11; // radius of the rounded ends
-const BUMPER = 0.22; // length of the darker bumper at each end
-const HULL_PATH = [
-  `M ${HL - END_R} ${-END_R}`,
-  `C ${HL * 0.55} ${-HW * 0.7}, 0.6 ${-HW}, 0 ${-HW}`,
-  `C -0.6 ${-HW}, ${-HL * 0.55} ${-HW * 0.7}, ${-HL + END_R} ${-END_R}`,
-  `A ${END_R} ${END_R} 0 0 0 ${-HL + END_R} ${END_R}`,
-  `C ${-HL * 0.55} ${HW * 0.7}, -0.6 ${HW}, 0 ${HW}`,
-  `C 0.6 ${HW}, ${HL * 0.55} ${HW * 0.7}, ${HL - END_R} ${END_R}`,
-  `A ${END_R} ${END_R} 0 0 0 ${HL - END_R} ${-END_R}`,
-  'Z',
-].join(' ');
+// Top-down polo boat, bow pointing +x, origin at the paddler. The outlines
+// below are measured from a photo of a real polo boat (scaled to 3 m long):
+// [x, half-width] in metres, for one side, bow to stern. The widest point
+// (0.61 m) is level with the back of the cockpit.
+const BUMPER = 0.1; // length of the darker bumper at each end
+const PADDLER_FORWARD = 0.1; // paddler's head is this far ahead of boat centre
+const HULL_SIDE = [
+  [1.5, 0], [1.496, 0.035], [1.492, 0.045], [1.484, 0.063], [1.471, 0.079],
+  [1.455, 0.096], [1.439, 0.104], [1.41, 0.116], [1.378, 0.124], [1.317, 0.137],
+  [1.255, 0.145], [1.133, 0.161], [1.011, 0.177], [0.889, 0.196], [0.644, 0.226],
+  [0.399, 0.257], [0.155, 0.283], [-0.09, 0.302], [-0.151, 0.304], [-0.273, 0.298],
+  [-0.518, 0.269], [-0.762, 0.234], [-1.007, 0.196], [-1.251, 0.157], [-1.374, 0.141],
+  [-1.414, 0.128], [-1.435, 0.116], [-1.455, 0.104], [-1.471, 0.086], [-1.484, 0.067],
+  [-1.492, 0.051], [-1.496, 0.033], [-1.5, 0],
+];
 
-// Cockpit: a rounded opening with a raised rim, centred on the paddler.
-const COCKPIT = { rx: 0.52, ry: 0.27 };
+// Cockpit: a blunt, narrower front; the sides angle out to a wide back that
+// is flat across with rounded corners.
+const COCKPIT_SIDE = [
+  [0.564, 0], [0.562, 0.055], [0.558, 0.079], [0.554, 0.092], [0.546, 0.112],
+  [0.53, 0.137], [0.497, 0.165], [0.465, 0.181], [0.399, 0.202], [0.334, 0.218],
+  [0.269, 0.23], [0.204, 0.238], [0.139, 0.243], [0.073, 0.247], [0.008, 0.247],
+  [-0.057, 0.247], [-0.09, 0.243], [-0.122, 0.234], [-0.155, 0.218], [-0.171, 0.206],
+  [-0.188, 0.185], [-0.2, 0.165], [-0.212, 0.137], [-0.22, 0.11], [-0.224, 0.094],
+  [-0.228, 0.069], [-0.23, 0],
+];
+const COCKPIT_FRONT = COCKPIT_SIDE[0][0];
+const COCKPIT_BACK = COCKPIT_SIDE[COCKPIT_SIDE.length - 1][0];
+
+// Smooth closed curve through points (Catmull-Rom spline as cubic Béziers).
+function smoothClosedPath(pts) {
+  const n = pts.length;
+  const at = (i) => pts[(i + n) % n];
+  const f = (v) => v.toFixed(3);
+  let d = `M ${f(pts[0][0])} ${f(pts[0][1])}`;
+  for (let i = 0; i < n; i++) {
+    const [p0, p1, p2, p3] = [at(i - 1), at(i), at(i + 1), at(i + 2)];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C ${f(c1[0])} ${f(c1[1])}, ${f(c2[0])} ${f(c2[1])}, ${f(p2[0])} ${f(p2[1])}`;
+  }
+  return d + ' Z';
+}
+
+// Mirror one side (bow to stern) into a closed outline.
+const mirrored = (side) =>
+  smoothClosedPath([
+    ...side.map(([x, y]) => [x, -y]),
+    ...side.slice(1, -1).reverse(),
+  ]);
+
+const HULL_PATH = mirrored(HULL_SIDE);
+const COCKPIT_PATH = mirrored(COCKPIT_SIDE);
 
 // Arrowhead on the foredeck pointing towards the bow.
-const BOW_ARROW = `M ${HL - 0.32} 0 L ${HL - 0.85} ${-0.17} L ${HL - 0.74} 0 L ${HL - 0.85} ${0.17} Z`;
+const BOW_ARROW = `M 1.2 0 L 0.8 -0.11 L 0.88 0 L 0.8 0.11 Z`;
 
 // Shared clip path so the bumpers follow the hull outline.
 export function pieceDefs() {
@@ -47,17 +83,20 @@ function paddle() {
 function boatElement(piece) {
   const hull = el('g', { class: 'hull' }, [
     el('ellipse', { cx: 0, cy: 0, rx: HL + 0.25, ry: 1.0, class: 'hit' }),
-    el('path', { d: HULL_PATH, class: 'select-ring' }),
-    el('path', { d: HULL_PATH, class: 'hull-shape' }),
-    el('g', { 'clip-path': 'url(#hull-clip)' }, [
-      el('rect', { x: HL - BUMPER, y: -HW, width: BUMPER, height: 2 * HW, class: 'bumper' }),
-      el('rect', { x: -HL, y: -HW, width: BUMPER, height: 2 * HW, class: 'bumper' }),
+    // The boat sits slightly behind the paddler, whose head is forward of
+    // the back of the cockpit.
+    el('g', { transform: `translate(${-PADDLER_FORWARD} 0)` }, [
+      el('path', { d: HULL_PATH, class: 'select-ring' }),
+      el('path', { d: HULL_PATH, class: 'hull-shape' }),
+      el('g', { 'clip-path': 'url(#hull-clip)' }, [
+        el('rect', { x: HL - BUMPER, y: -HW, width: BUMPER, height: 2 * HW, class: 'bumper' }),
+        el('rect', { x: -HL, y: -HW, width: BUMPER, height: 2 * HW, class: 'bumper' }),
+      ]),
+      el('line', { x1: COCKPIT_FRONT, y1: 0, x2: HL - BUMPER, y2: 0, class: 'deck-ridge' }),
+      el('line', { x1: COCKPIT_BACK, y1: 0, x2: -HL + BUMPER, y2: 0, class: 'deck-ridge' }),
+      el('path', { d: COCKPIT_PATH, class: 'cockpit' }),
+      el('path', { d: BOW_ARROW, class: 'bow-arrow' }),
     ]),
-    el('line', { x1: COCKPIT.rx, y1: 0, x2: HL - BUMPER, y2: 0, class: 'deck-ridge' }),
-    el('line', { x1: -COCKPIT.rx, y1: 0, x2: -HL + BUMPER, y2: 0, class: 'deck-ridge' }),
-    el('ellipse', { cx: 0, cy: 0, rx: COCKPIT.rx + 0.05, ry: COCKPIT.ry + 0.05, class: 'cockpit-rim' }),
-    el('ellipse', { cx: 0, cy: 0, ...COCKPIT, class: 'cockpit' }),
-    el('path', { d: BOW_ARROW, class: 'bow-arrow' }),
     paddle(),
     el('line', { x1: HL, y1: 0, x2: HANDLE_OFFSET, y2: 0, class: 'handle-arm' }),
     el('g', { class: 'handle', 'data-handle': piece.id, transform: `translate(${HANDLE_OFFSET} 0)` }, [
@@ -70,7 +109,7 @@ function boatElement(piece) {
   ]);
   const node = el('g', { class: `piece boat team-${piece.team}`, 'data-id': piece.id }, [
     hull,
-    el('circle', { cx: 0, cy: 0, r: 0.42, class: 'helmet' }),
+    el('circle', { cx: 0, cy: 0, r: 0.27, class: 'helmet' }),
     el('text', { x: 0, y: 0.02, class: 'number' }),
   ]);
   node.querySelector('.number').textContent = piece.number;
